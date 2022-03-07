@@ -43,7 +43,7 @@ void changeState(){
       state++;
       state %= 4;
     }
-    else {
+    else if(digitalRead(DIR) == 0){
       state--;
       if (state < 0) state = 3;
       state %= 4;
