@@ -17,7 +17,8 @@ int count0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(STEP, INPUT_PULLUP);
+  //pinMode(STEP, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(STEP), counter, RISING);
   pinMode(DIR, INPUT_PULLUP);
   pinMode(ENC_A, OUTPUT);
   pinMode(ENC_B, OUTPUT);
@@ -25,7 +26,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  counter();
+  //counter();
 }
 
 void encoder(){

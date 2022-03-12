@@ -19,6 +19,9 @@ double newPos = 0;
 double currentSpeed = 0;
 double integ1[] = {0, 0};                // current value and previous value
 
+int BIGNUM = 42000000;
+int SMALLNUM = 41998600;
+
 int encoderState[] = {0, 0};             // current state, previous state
 int count1 = 0;                          // internal counter for encoder decoder
 
@@ -46,7 +49,7 @@ void setup() {
 
   motorControlTimerSetup();
 
-  newPos = -20;
+  newPos = 20;
 
 }
 
@@ -87,7 +90,8 @@ void motorControl (double input) {
   if (y > MAXSPEED) y = MAXSPEED;
   else if (y < -MAXSPEED) y = -MAXSPEED;
   integ1[1] = y;
-  speedRatio = 1 - abs(0.99 * (MAXSPEED / y));
+  //speedRatio = 1 - abs(0.99 * (MAXSPEED / y));
+  speedRatio = y / MAXSPEED;
 }
 
 void motorControlStep (uint32_t spd, uint32_t acel, uint8_t dire) {
@@ -213,9 +217,9 @@ void TC8_Handler() {
   motorControl(newPos);
   motorControlEncoder();
 
-  TC2->TC_CHANNEL[1].TC_RC = MAXSPEED * speedRatio; // adjust speed
-  digitalWrite(12, HIGH);
-  digitalWrite(12, LOW);
+  TC2->TC_CHANNEL[1].TC_RC = BIGNUM - (SMALLNUM * abs(speedRatio)); // adjust speed
+  digitalWrite(STEP, HIGH);
+  digitalWrite(STEP, LOW);
 }
 
 
