@@ -1,17 +1,22 @@
+#define MCK 84000000
 
-
-#define MAXACCEL 100
 
 #define DIR 32                          // Direction pin
-#define EN 34                           // enable pin
-#define STEP 2                          // step pin
+#define EN 33                           // enable pin
+//#define STEP 2                          // step pin
 #define FSAFE 34                        // failsafe flag pin
 #define ESTOP 35                        // estop flag pin
 #define ENC_A 36                        // Encoder pin A
 #define ENC_B 37                        // Encoder pin B
 #define ENC_RI 38                       // Encoder pin RI
-double MAXSPEED = 2400;                 // arbitrary max speed value
+
+
+double MAXACCEL = 0.05;
+
+double MAXSPEED = 50;                 // arbitrary max speed value 50 is about as fast as it can go in no load
+double MINSPEED = 500;                 
 double Ts = 0.00005;
+double tolerance = 0.1;
 double speedRatio = 0;
 double currentPos = 0;                  // current position in mm
 double lastPos = 0;
@@ -31,13 +36,13 @@ double e2 = 0;
 double y = 0;
 
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
-double gainM[] = {1, 1, 1, 1, 1};
+double gainM[] = {10, 1, 1, 1, 1};
 
 void setup() {
   // put your setup code here, to run once:
   // setup ISR register
   pinMode(12, OUTPUT);
-  pinMode(STEP, OUTPUT);
+  //pinMode(STEP, OUTPUT);
 
   pinMode(DIR, OUTPUT);
   pinMode(EN, OUTPUT);
@@ -45,6 +50,9 @@ void setup() {
   pinMode(ENC_B, INPUT);
   pinMode(ENC_RI, INPUT);
 
+  attachInterrupt(digitalPinToInterrupt(ENC_A), motorControlEncoder, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENC_B), motorControlEncoder, CHANGE);
+  digitalWrite(EN, LOW);
   Serial.begin(230400);
 
   motorControlTimerSetup();
@@ -54,7 +62,10 @@ void setup() {
 }
 
 void loop() {
-  printer();
+  //printer();
+
+  
+  
   // setup timer for 100k sample rate: 10us. use Timer Counter(TC)
 
   // encoder code
@@ -69,7 +80,7 @@ void loop() {
 
 void motorControl (double input) {
   // do entire control loop in here
-
+  posCheck(input);
   // input in mm minus current pos in mm
   e1 = gainM[0] * (input - currentPos);
   e2 = e1 - (gainM[1] * currentSpeed);
@@ -92,6 +103,10 @@ void motorControl (double input) {
   integ1[1] = y;
   //speedRatio = 1 - abs(0.99 * (MAXSPEED / y));
   speedRatio = y / MAXSPEED;
+
+  // set new speed
+  REG_PWM_CPRDUPD1 = MINSPEED - (MINSPEED-MAXSPEED)*abs(speedRatio);
+  REG_PWM_CDTYUPD1 = (MINSPEED -(MINSPEED-MAXSPEED)*abs(speedRatio))/20;
 }
 
 void motorControlStep (uint32_t spd, uint32_t acel, uint8_t dire) {
@@ -99,7 +114,18 @@ void motorControlStep (uint32_t spd, uint32_t acel, uint8_t dire) {
   // set driver outputs
 }
 
-int32_t motorControlEncoder () {
+void posCheck(double input){
+  if (abs(input - currentPos) < tolerance){
+  
+      digitalWrite(EN, LOW);    // disable output
+    
+  }
+  else {
+    digitalWrite(EN, HIGH);
+  }
+}
+
+void motorControlEncoder () {
   int A = 0;  // Encoder A input
   int B = 0;  // Encoder B input
   int dirFactor = 0;  // number used in incrementing position counter
@@ -188,9 +214,23 @@ void motorControlTimerSetup () {
   TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN; // Enable timer
   //------------------------------------------------------------------
 
+  //PB17 or pin A9
+  PIOB->PIO_PDR |= 1<<17;    // disable pio and enable periferals
+  PIOB->PIO_ABSR |= 1<<17;   // set pin B17 to perf B which is PWML1
+  
+  PMC->PMC_PCER1 |= PMC_PCER1_PID36;    // turn on PWM controller
+
+  REG_PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(84);   // set PWM clock to 1MHz
+  REG_PWM_CMR1 = PWM_CMR_CALG | PWM_CMR_CPRE_CLKA;      // set controller to use clock A
+  REG_PWM_CPRD1 = MAXSPEED;     // set speed to 20kHz
+  REG_PWM_CDTY1 = MAXSPEED/2;   // set 50% dutycycle
+  REG_PWM_ENA = PWM_ENA_CHID1;       // enable PWM Channel 1
+
+
   // TC7
   //------------------------------------------------------------------
-  // turn on TC7
+  // turn on TC7(no longer using)
+  /*
   PMC->PMC_PCER1 |= PMC_PCER1_PID34;
 
   TC2->TC_CHANNEL[1].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
@@ -198,41 +238,31 @@ void motorControlTimerSetup () {
   TC2->TC_CHANNEL[1].TC_IER = TC_IER_CPCS; // setup interrupt
   NVIC_EnableIRQ(TC7_IRQn);         // software trigger
   TC2->TC_CHANNEL[1].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN; // Enable timer
-
+  */
 }
 
 // Interupts
-void TC7_Handler() {
-  TC2->TC_CHANNEL[1].TC_SR;
 
-  digitalWrite(STEP, HIGH);
-  digitalWrite(STEP, LOW);
-}
 void TC8_Handler() {
   TC2->TC_CHANNEL[2].TC_SR;
   //Serial.println('loop');
   // get current speed
-  currentSpeed = gainM[2] * (MAXSPEED * speedRatio);
-  // functions to run
   motorControl(newPos);
-  motorControlEncoder();
-
-  TC2->TC_CHANNEL[1].TC_RC = BIGNUM - (SMALLNUM * abs(speedRatio)); // adjust speed
-  digitalWrite(STEP, HIGH);
-  digitalWrite(STEP, LOW);
+  currentSpeed = gainM[2] * (MAXSPEED * speedRatio);
+  
 }
 
 
 // test functions
 void printer() {
   if (currentPos != lastPos) {
-    Serial.print(currentPos);
+    Serial.println(currentPos);
+    //Serial.print("  |  ");
+    Serial.print(newPos-currentPos);
     Serial.print("  |  ");
-    Serial.print(e1);
-    Serial.print("  |  ");
-    Serial.print(e2);
-    Serial.print("  ::  ");
-    Serial.println(100 * speedRatio);
+    //Serial.print(e2);
+    //Serial.print("  ::  ");
+    //Serial.println(100 * speedRatio);
   }
   lastPos = currentPos;
   //Serial.print(encoderState[0]); Serial.println(encoderState[1]);
