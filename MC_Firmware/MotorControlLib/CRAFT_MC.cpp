@@ -1,3 +1,7 @@
+#include <Arduino.h>
+#include "CRAFT_MC.h"
+
+
 #define MCK 84000000
 
 
@@ -38,8 +42,7 @@ double y = 0;
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
 double gainM[] = {10, 1, 1, 1, 1};
 
-void setup() {
-  // put your setup code here, to run once:
+void setupMC() {
   // setup ISR register
   pinMode(12, OUTPUT);
   //pinMode(STEP, OUTPUT);
@@ -61,22 +64,27 @@ void setup() {
 
 }
 
-void loop() {
-  //printer();
-
-  
-  
-  // setup timer for 100k sample rate: 10us. use Timer Counter(TC)
-
-  // encoder code
-
-  // unit convertions
-
-  // MAX Acceleration and Velocity for motor
-
-  // gain values for feedback loop in a matrix
-  // PWM to drive motor
+void setPosition(double newPos) {
+  // use this to set a new position
+  newPos = newPos;
 }
+
+double getPosition(){
+  return currentPos;
+}
+
+void setOrigin() {
+  currentPos = 0;                       // use this to set the origin
+}
+
+void disableMotor(int state){
+  // use this to stop the motor
+  switch(state){
+    case (0):// pull pin low and turn off timer
+    case (1):// set pin high and restart timer
+  }
+}
+
 
 void motorControl (double input) {
   // do entire control loop in here
@@ -226,19 +234,6 @@ void motorControlTimerSetup () {
   REG_PWM_CDTY1 = MAXSPEED/2;   // set 50% dutycycle
   REG_PWM_ENA = PWM_ENA_CHID1;       // enable PWM Channel 1
 
-
-  // TC7
-  //------------------------------------------------------------------
-  // turn on TC7(no longer using)
-  /*
-  PMC->PMC_PCER1 |= PMC_PCER1_PID34;
-
-  TC2->TC_CHANNEL[1].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
-  TC2->TC_CHANNEL[1].TC_RC = MAXSPEED / speedRatio;   // set timer to 20kHz
-  TC2->TC_CHANNEL[1].TC_IER = TC_IER_CPCS; // setup interrupt
-  NVIC_EnableIRQ(TC7_IRQn);         // software trigger
-  TC2->TC_CHANNEL[1].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN; // Enable timer
-  */
 }
 
 // Interupts
@@ -265,5 +260,4 @@ void printer() {
     //Serial.println(100 * speedRatio);
   }
   lastPos = currentPos;
-  //Serial.print(encoderState[0]); Serial.println(encoderState[1]);
 }
