@@ -15,9 +15,9 @@
 #define ENC_RI 38                       // Encoder pin RI
 
 
-double MAXACCEL = 0.05;
+double MAXACCEL = 0.2;
 
-double MAXSPEED = 50;                 // arbitrary max speed value 50 is about as fast as it can go in no load
+double MAXSPEED = 100;                 // arbitrary max speed value 50 is about as fast as it can go in no load
 double MINSPEED = 500;                 
 double Ts = 0.00005;
 double tolerance = 0.1;
@@ -43,7 +43,7 @@ double e2 = 0;
 double y = 0;
 
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
-double gainM[] = {10, 1, 1, 1, 1};
+double gainM[] = {45, 1, 1, 1, 1};
 
 void setupMC() {
   // setup ISR register
@@ -110,8 +110,8 @@ void motorControl (double input) {
   e2 = e1 - (gainM[1] * currentSpeed);
 
   // set direction
-  if (e1 < 0) digitalWrite(DIR, LOW);      // throw it reverse
-  else if (e1 > 0) digitalWrite(DIR, HIGH);  // go forward
+  if (e1 < 0) digitalWrite(DIR, HIGH);      // throw it reverse
+  else if (e1 > 0) digitalWrite(DIR, LOW);  // go forward
   // set acceleration
   if (e2 > MAXACCEL) e2 = MAXACCEL;
   else if (e2 < -MAXACCEL) e2 = -MAXACCEL;

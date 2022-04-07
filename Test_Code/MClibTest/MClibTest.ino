@@ -31,7 +31,7 @@ void loop() {
   disableMotor(true);
   SerialUSB.println("Move Done!");
   
-  setPosition(20);
+  setPosition(-30);
   SerialUSB.println("New position Set");
   SerialUSB.println(getSetPos());
   SerialUSB.println(getPosition());
@@ -51,6 +51,6 @@ void runMotorTest(){
     }
     */
     
-   //SerialUSB.println(getPosition());
+   SerialUSB.println(getPosition());
   }
 }
