@@ -45,7 +45,7 @@ double y = 0;
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
 double gainM[] = {45, 1, 1, 1, 1};
 
-void setupMC() {
+void setupMC(double MAXS, double MINS, double ACCEL) {
   // setup ISR register
   pinMode(12, OUTPUT);
   //pinMode(STEP, OUTPUT);
@@ -61,6 +61,9 @@ void setupMC() {
   digitalWrite(EN, LOW);
   //Serial.begin(230400);
 
+	MAXSPEED = MAXS;
+	MINSPEED = MINS;
+	MAXACCEL = ACCEL;
   motorControlTimerSetup();
 
   newPos = 0;
@@ -100,6 +103,10 @@ void disableMotor(bool state){
 
 bool isRun() {
     return isRunning;
+}
+
+void changeGain(double input, int index){
+	gainM[index] = input;
 }
 
 void motorControl (double input) {
