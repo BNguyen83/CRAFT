@@ -3,8 +3,8 @@
 
 void setup() {
   // put your setup code here, to run once:
-  setupMC(1000, 100, 0.2);
-  changeGain(50, 0);
+  setupMC(100, 200, 0.2, 0.02);
+  changeGain(70, 0);
   setPosition(0);
   SerialUSB.begin(230400);
 }
@@ -23,7 +23,7 @@ void loop() {
   SerialUSB.println(getSetPos());
   SerialUSB.println(getPosition());
   
-  delay(2000);
+  delay(500);
   disableMotor(false);
   SerialUSB.println(isRun());
   
@@ -37,7 +37,7 @@ void loop() {
   SerialUSB.println(getSetPos());
   SerialUSB.println(getPosition());
   
-  delay(2000);
+  delay(500);
   disableMotor(false);
   SerialUSB.println(isRun());
 }

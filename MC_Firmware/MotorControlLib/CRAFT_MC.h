@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-void setupMC(double MAXS, double MINS, double ACCEL);                         // use this to setup the library code
+void setupMC(double MAXS, double MINS, double ACCEL, double tol);                         // use this to setup the library code
 void setPosition(double input);      // use this to set a new position
 void setOrigin();                       // use this to set the origin
 void disableMotor(bool state);           // use this to stop the motor

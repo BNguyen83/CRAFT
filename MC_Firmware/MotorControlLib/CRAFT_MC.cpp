@@ -45,7 +45,7 @@ double y = 0;
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
 double gainM[] = {45, 1, 1, 1, 1};
 
-void setupMC(double MAXS, double MINS, double ACCEL) {
+void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
   // setup ISR register
   pinMode(12, OUTPUT);
   //pinMode(STEP, OUTPUT);
@@ -64,6 +64,7 @@ void setupMC(double MAXS, double MINS, double ACCEL) {
 	MAXSPEED = MAXS;
 	MINSPEED = MINS;
 	MAXACCEL = ACCEL;
+	tolerance = tol;
   motorControlTimerSetup();
 
   newPos = 0;
