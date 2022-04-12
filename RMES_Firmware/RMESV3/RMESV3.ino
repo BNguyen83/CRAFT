@@ -1,3 +1,5 @@
+#include <CRAFT_MC.h>
+
 #define chB0 22 //check pin names, i need to make them match my mapping in readCh() as well
 #define chB1 23
 #define chB2 24
@@ -29,20 +31,55 @@ void measureRMES(float * resArray, int numCh);
 void setup() {
   numCh = 20;
   RMESini(numCh);
-  Serial.begin(9600);
+  setupMC(100, 200, 0.2, 0.02);
+  changeGain(70, 0);
+  setPosition(0);
+  SerialUSB.begin(230400);
+  //Serial.begin(9600);
 }
 
 void loop() {
   
   // put your main code here, to run repeatedly:
-  float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+  runMotorTest();
+  SerialUSB.println(isRun());
+  disableMotor(true);
+  SerialUSB.println("Move Done!");
+  
+  setPosition(0);
+  SerialUSB.println("New position Set");
+  SerialUSB.println(getSetPos());
+  SerialUSB.println(getPosition());
+  
+  delay(500);
+  disableMotor(false);
+  SerialUSB.println(isRun());
+  
+  runMotorTest();
+  SerialUSB.println(isRun());
+  disableMotor(true);
+  SerialUSB.println("Move Done!");
+  
+  setPosition(-20);
+  SerialUSB.println("New position Set");
+  SerialUSB.println(getSetPos());
+  SerialUSB.println(getPosition());
+  
+  delay(2000);
+  
+  
+  float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   measureRMES(res, numCh);
   for(int i = 0; i < numCh; i++){
-    Serial.print("Resistance in Channel ");
-    Serial.print(i+1);
-    Serial.print("\t");
-    Serial.println(res[i],3);}
-  delay(5000);
+    SerialUSB.print("Resistance in Channel ");
+    SerialUSB.print(i+1);
+    SerialUSB.print("\t");
+    SerialUSB.println(res[i],3);}
+  delay(2000);
+
+  disableMotor(false);
+  SerialUSB.println(isRun());
 }
 
 void RMESini(int numOfChannels){
@@ -312,4 +349,19 @@ float VtoR(float voltage, int i){
   res = (RMESrs*(RMESa[i] * voltage + RMESb[i]))/(Vs - RMESa[i] * voltage - RMESb[i]);
   //Serial.println(voltage);
   return res;
+}
+
+void runMotorTest(){
+  while(isRun()){
+    
+    /*
+    if(Serial.available() > 0) {
+    
+    disableMotor(Serial.find('k'));
+    
+    }
+    */
+    
+   //SerialUSB.println(getPosition());
+  }
 }
