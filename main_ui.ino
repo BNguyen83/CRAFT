@@ -2,11 +2,6 @@
 #include <Keypad.h>
 
 // LCD Pins
-uint8_t DB7 = 22; // Pins for 4-bit operation#include <LiquidCrystal.h>
-#include <Keypad.h>
-
-// LCD Pins
-// LCD Pins
 uint8_t DB7 = 39; // Pins for 4-bit operation
 uint8_t DB6 = 40;
 uint8_t DB5 = 41;
