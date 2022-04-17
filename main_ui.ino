@@ -12,14 +12,18 @@ uint8_t E1  = 45; // top enable, first 2 rows
 uint8_t E2  = 46; // bot enable, bottom 2 rows
 
 // Keypad pins
-uint8_t K8 = 5; // Columns
-uint8_t K7 = 6;
-uint8_t K6 = 7;
-uint8_t K5 = 8;
-uint8_t K4 = 9; // Rows
-uint8_t K3 = 10;
-uint8_t K2 = 11;
-uint8_t K1 = 12;
+// Rows
+uint8_t K1 = 5; // A
+uint8_t K2 = 6; // B
+uint8_t K7 = 11; // D, It bothers me so much that 7 is 'D' and 8 is 'C'
+uint8_t K8 = 12; // C
+
+// Columns
+uint8_t K3 = 7; // 1
+uint8_t K4 = 8; // 2
+uint8_t K5 = 9; // 3
+uint8_t K6 = 10; // 4
+
 
 // Top half LCD initialization
 LiquidCrystal top(RS, RW, E1, DB4, DB5, DB6, DB7);
@@ -34,11 +38,11 @@ const byte COLS = 4; // four columns
 char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'},
                               {'4', '5', '6', 'B'},
                               {'7', '8', '9', 'C'},
-                              {'*', '0', '#', 'D'} };
+                              {'*', '0', '#', '.'} };
 
 // Arduino digital pin connection
-byte rowPins[ROWS] = {K5, K6, K7, K8}; 
-byte colPins[COLS] = {K1, K2, K3, K4};
+byte rowPins[ROWS] = {K1, K2, K8, K7}; 
+byte colPins[COLS] = {K3, K4, K5, K6};
 
 // Creating the keypad
 Keypad keyp = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
