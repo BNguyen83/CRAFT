@@ -17,6 +17,7 @@ LiquidCrystal top(RS, RW, E1, DB4, DB5, DB6, DB7);
 // Bottom half LCD initialization
 LiquidCrystal bot(RS, RW, E2, DB4, DB5, DB6, DB7);
 
+
 // Keypad pins
 // Rows
 uint8_t K1 = 5;  // A
@@ -40,23 +41,25 @@ char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', 
 byte rowPins[ROWS] = {K1, K2, K8, K7}; 
 byte colPins[COLS] = {K3, K4, K5, K6};
 
-// Creating the keypad
 Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
+
 // Test parameters
-int cycleCount;
-float trvSpeed;
-float trvDistance;
-float maxRes;
-float maxInForce;
-float maxRemForce;
-float maxInSpeed;
+int   cycleCount;
+float trvSpeed;    // Travel speed
+float trvDistance; // Travel Distance
+float maxRes;      // Max resistance
+float maxInForce;  // Insertion force
+float maxRemForce; // Removal force
+float maxInSpeed;  // Insertion speed 
 float dwellTime;
 
-// Key flags
-int keyCountA = 0;
-int keyCountB = 0;
-int keyCountC = 0;
+//Main
+int mainState = 0;
+// Menu
+int menuState = 0;
+// Test
+int testState = 0;
 
 void setup() 
 { 
@@ -77,51 +80,162 @@ void setup()
 
 void loop() 
 {
-  char key = myKeypad.getKey();
+    char key = myKeypad.getKey();
+  
+  switch(mainState){
+    case 0: // Start Menu
+      switch(menuState){ // Sub-state
+        case 0: // Main menu prompt
+            bot.clear();
+            top.setCursor(1,0);
+            top.print("Welcome to C.R.A.F.T.!");
+            top.setCursor(1,1);
+            top.print("Connection Resistance And Force Tester ");
 
-  /*
-  if(key == '*'){
-    keyCountA = 0;
-    keyCountB = 0;
-    keyCountC = 0;
-    setup();
+            bot.setCursor(1,1);
+            bot.print("<A> Begin test  <B> Test Cycle ");
+
+          if(key == 'A'){
+            menuState++; // Menu state = 1, does it go to case 1 now?
+          }break;
+        case 1: // Cycle count
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Cycle count: ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 2: // Travel speed
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Travel speed: ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 3: // Travel distance
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Travel distance: ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 4: // Max resistance
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Resistance (mOhms): ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 5: // Max insertion force
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Insertion force (kg): ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 6: // Max removal force
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Removal force (kg): ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 7: // Insertion speed
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Insertion speed: ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            menuState++;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        case 8: // Dwell time
+          top.clear();
+              bot.clear();
+              bot.setCursor(21,1);
+              bot.print("<*> Back  <#> Next");
+              top.setCursor(1,0);
+              top.print("Set test parameters...");
+    
+            bot.setCursor(1,0); 
+              bot.print("Dwell time: ");
+          /* Code where keypad is scanned */
+
+          if(key == '#'){
+            mainState++; // Main state is incremented
+          } else if(key == '*'){
+            menuState--;
+          }break;
+      }
+    //case 1: // Testing
+    //case 2: // Testing menu
   }
-
-  if(keyCountA == 0 && keyCountB == 0 && keyCountC == 0)
-  {
-    if(key == 'A'){ // Begin Test
-      keyCountA++;
-      keyCountB++;
-      keyCountC++;
-
-      top.clear();
-      bot.clear();
-      bot.setCursor(21,1);
-      bot.print("<*> Back  <#> Next");
-
-      top.setCursor(1,0);
-      top.print("Set test parameters...");
-
-      bot.setCursor(1,0);
-      bot.print("Cycle count:");
-    }
-
-    if(key == 'B'){ // Test Cycle
-      keyCountA++;
-      keyCountB++;
-      keyCountC++;
-
-      top.clear();
-      bot.clear();
-      bot.setCursor(21,1);
-      bot.print("<*> Back  <#> Next");
-
-      top.setCursor(1,0);
-      top.print("Beginning test cycle...");
-
-      // Should be similar to the way 'Begin test' works except all values are predetermined
-      // setParameters() will not be necessary for this option
-    }
-  }
-  */
 }
