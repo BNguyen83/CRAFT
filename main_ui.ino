@@ -224,38 +224,49 @@ void loop()
           /* Code where keypad is scanned */
 
           if(key == '#'){
-            mainState += 1; // Main state is incremented
+            menuState++;
           } else if(key == '*'){
             menuState--;
           }break;
-      }break;
+        case 9: // Confirm test
+          top.clear();
+          bot.clear();
+          bot.setCursor(24,1);
+          bot.print("<*> No  <#> Yes");
+          top.setCursor(1,0);
+          top.print("Begin test?");
+
+          if(key == '#'){
+            mainState += 1;
+          } else if(key == '*'){
+            menuState--;
+          }break;
+        }break;
     case 1: // Testing
       top.clear();
       bot.clear();
-      bot.setCursor(19,1);
-      bot.print("<*> Cancel  <#> Next");
+      bot.setCursor(31,1);
+      bot.print("<#> Next");
       top.setCursor(1,0);
       top.print("Beginning test...");
+      bot.setCursor(1,0);
+      bot.print("Insert SD card now");
 
-      /* A yes/no prompt will be added if user wants to cancel test */
-      if(key == '*'){
-        mainState = 0;
-        menuState = 0;
-      }
-      break;
+      if(key == '#'){
+        /* Testing actually occurs here*/
+      }break;
+     
     case 2: // Test cycle
       top.clear();
       bot.clear();
-      bot.setCursor(21,1);
-      bot.print("<*> Back  <#> Next");
+      bot.setCursor(24,1);
+      bot.print("<*> No  <#> Yes");
       top.setCursor(1,0);
-      top.print("Begin test cycle...");
+      top.print("Begin test cycle?");
 
       /* Another sub-state for starting the test cycle will go here */
       if(key == '*'){
         mainState = 0;
-      }
-      break;
+      }break;
   }
 }
-
