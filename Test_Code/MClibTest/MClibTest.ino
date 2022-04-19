@@ -62,7 +62,7 @@ void runMotorTest(){
     }
     */
     
-   //Serial.println(getPosition());
+   Serial.println(getPosition());
   }
   Serial.println("test");
 }

@@ -1,4 +1,5 @@
 #include <hid.h>
+<<<<<<< Updated upstream
 #include <FatFs.h>
 #include "ffconf.h"
 
@@ -10,6 +11,10 @@ int i = 0;
 uint32_t* nbytes;                                  
 uint8_t data[512];
 
+=======
+//#include <FatFs.h>
+//#include "ffconf.h"
+>>>>>>> Stashed changes
 USBHost Usb;
 
 void setup() {
@@ -30,6 +35,7 @@ void loop() {
   
   //checkTask();
   Usb.Task();
+<<<<<<< Updated upstream
   doStuff();
   
   
@@ -111,4 +117,7 @@ void doStuff(){
       if (i < 512) i = 0;
     }
   }
+=======
+  //Serial.println(Usb.dispatchPkt(12, 0, 0)); 
+>>>>>>> Stashed changes
 }
