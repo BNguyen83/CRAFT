@@ -11,6 +11,7 @@ double getPosition();
 double getSetPos();
 bool isRun();
 void changeGain(double input, int index);
+void changeSpeed(double speedratio);
 
 // plz dont use these
 void motorControl(double input);

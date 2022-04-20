@@ -110,6 +110,13 @@ void changeGain(double input, int index){
 	gainM[index] = input;
 }
 
+void changeSpeed(double speedratio){
+	double currentTopSpeed = 50000 / MAXSPEED;	// convert speed to Hz
+	double currentBotSpeed = 50000 / MINSPEED;
+	
+	double newMaxSpeed = speedratio * (currentTopSpeed - currentBotSpeed) + currentBotSpeed;
+	MAXSPEED = 50000 / newMaxSpeed; // convert back to ArDuiNO sPEak
+}
 void motorControl (double input) {
   // do entire control loop in here
   posCheck(input);
