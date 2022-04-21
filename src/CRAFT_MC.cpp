@@ -8,8 +8,8 @@
 #define DIR 32                          // Direction pin
 #define EN 33                           // enable pin
 //#define STEP 2                          // step pin
-#define FSAFE 34                        // failsafe flag pin
-#define ESTOP 35                        // estop flag pin
+//#define FSAFE 34                        // failsafe flag pin
+//#define ESTOP 35                        // estop flag pin
 #define ENC_A 36                        // Encoder pin A
 #define ENC_B 37                        // Encoder pin B
 #define ENC_RI 38                       // Encoder pin RI
