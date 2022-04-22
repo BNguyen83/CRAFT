@@ -39,9 +39,9 @@ int interruptHandler(){
 }
 
 void setupInterrupts(){
-  pinMode(ESTOP_, INPUT);
+  pinMode(ESTOP_, INPUT_PULLUP);
   pinMode(FAILSAFE_, INPUT);
-  attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, RISING);
   attachInterrupt(digitalPinToInterrupt(FAILSAFE_), failsafe, RISING);
   delay(1000);
 }

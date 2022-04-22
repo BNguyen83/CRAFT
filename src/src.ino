@@ -16,15 +16,16 @@ void loop() {
   //Serial.println(" move");
   //runMotor(0);
   //runMotor(-10);
+  
+  //flag = 0;
   checkFlag();
-  flag = 0;
   delay(1000);
 }
 
 void checkFlag(){
   flag = interruptHandler();
-  Serial.print("flag: ");
-  Serial.println(flag);
+  //Serial.print("flag: ");
+  //Serial.println(flag);
   switch (flag){
     case 0: break;
     case 1: Serial.println("Emergency Stop Active"); break;
