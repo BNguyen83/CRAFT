@@ -2,7 +2,8 @@
 #include <Keypad.h>
 #include <SPI.h> // SD card headers
 #include <SD.h>
-#include <String.h>
+#include "RMES.h" // Mark's header
+#include "CRAFT_MC.h" // Andrew's header
 
 File myFile;
 
@@ -40,7 +41,7 @@ const byte ROWS = 4; // four rows
 const byte COLS = 4; // four columns
 
 // Key definitions
-char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', '.'} };
+char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', '.'}, {'*', '0', '#', 'D'} };
 
 // Arduino digital pin connection
 byte rowPins[ROWS] = {K1, K2, K8, K7}; 
@@ -53,11 +54,12 @@ Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 int   cycleCount;
 float trvSpeed;    // Travel speed
 float trvDistance; // Travel Distance
-float maxRes;      // Max resistance
+int   maxRes;      // Max resistance
 float maxInForce;  // Insertion force
-float maxRemForce; // Removal force
+float minRemForce; // Removal force
 float maxInSpeed;  // Insertion speed 
 float dwellTime;
+int   res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
 
 // State machine flags
 //Main
@@ -66,18 +68,19 @@ int mainState = 0;
 int menuState = 0;
 // Test
 int testState = 0;
-int printFlag = 0;
-  int    i = 0;
-  
-  char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+// Keypad flag
+int printFlag = 0;
+
+char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int i = 0;
 
 void setup() 
 { 
   // Initialize top and bottom LCD
   top.begin(40,2);
   bot.begin(40,2);
-
+  RMESini(20);
   Serial.begin(9600);
 
   /* Other function initializations go here */
@@ -86,7 +89,6 @@ void setup()
 void loop() 
 {
   char   key = myKeypad.getKey();
-
   
   switch(mainState){
     case 0: /*** Main menu ***/
@@ -107,7 +109,7 @@ void loop()
             printFlag = 0;
             // Menu state = 1, does it go to case 1 now?
           } else if(key == 'B'){
-            //mainState += 2;
+            //mainState += 3;
             printFlag = 0;
           }
           break;
@@ -126,23 +128,25 @@ void loop()
 
           if(key > 47 && key < 58 && i < 9){
             bot.setCursor(14+i,0);
-            arr[i] = myKeypad.getKey();
+            arr[i] = key;
             bot.print(key);
             i++;
           }
 
           if(key == '#'){
             String ms = String(arr);
-            ms.remove(i+1);
+            ms.remove(i);
             cycleCount = ms.toInt(); 
             Serial.println(cycleCount);
             menuState++;
             i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
-            i = 0;
           }break;
         case 2: // Travel speed
         if(printFlag == 0){
@@ -154,21 +158,28 @@ void loop()
           top.print("Set test parameters...");
     
           bot.setCursor(1,0); 
-          bot.print("Travel speed: ");}
+          bot.print("Travel speed (in/s): ");} // in/s
           printFlag = 1;
 
-          if(key > 47 && key < 58 && i < 9){
-            bot.setCursor(15+i,0);
-            arr[i] = myKeypad.getKey();
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(22+i,0);
+            arr[i] = key;
             bot.print(key);
             i++;
           }
 
           if(key == '#'){
-                      Serial.println(cycleCount);
+            String ms = String(arr);
+            ms.remove(i);
+            trvSpeed = ms.toFloat();
+            Serial.println(trvSpeed); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -182,13 +193,27 @@ void loop()
           top.print("Set test parameters...");
     
           bot.setCursor(1,0); 
-          bot.print("Travel distance: ");}
-          /* Code where keypad is scanned */
+          bot.print("Travel distance (in): ");} // 
           printFlag = 1;
+
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(23+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            trvDistance = ms.toFloat();
+            Serial.println(trvDistance); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -203,12 +228,26 @@ void loop()
     
           bot.setCursor(1,0); 
           bot.print("Resistance (mOhms): ");}
-          /* Code where keypad is scanned */
           printFlag = 1;
+
+          if(key > 47 && key < 58 && i < 9){
+            bot.setCursor(21+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            maxRes = ms.toInt();
+            Serial.println(maxRes); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -224,16 +263,30 @@ void loop()
           bot.setCursor(1,0); 
           bot.print("Insertion force (kg): ");}
           printFlag = 1;
-          /* Code where keypad is scanned */
+
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(23+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
 
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            maxInForce = ms.toFloat();
+            Serial.println(maxInForce); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
-        case 6: // Max removal force
+        case 6: // Minimum removal force
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -244,12 +297,26 @@ void loop()
     
           bot.setCursor(1,0); 
           bot.print("Removal force (kg): ");}
-          /* Code where keypad is scanned */
           printFlag = 1;
+
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(21+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            minRemForce = ms.toFloat();
+            Serial.println(minRemForce); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -264,12 +331,26 @@ void loop()
     
           bot.setCursor(1,0); 
           bot.print("Insertion speed: ");}
-          /* Code where keypad is scanned */
           printFlag = 1;
+
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(18+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            maxInSpeed = ms.toFloat();
+            Serial.println(maxInSpeed); 
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -285,12 +366,26 @@ void loop()
           bot.setCursor(1,0); 
           bot.print("Dwell time: ");}
           printFlag = 1;
-          /* Code where keypad is scanned */
+
+          if(key > 45 && key < 58 && i < 9){
+            bot.setCursor(13+i,0);
+            arr[i] = key;
+            bot.print(key);
+            i++;
+          }
 
           if(key == '#'){
+            String ms = String(arr);
+            ms.remove(i);
+            dwellTime = ms.toFloat(); 
+            Serial.println(dwellTime);
             menuState++;
+            i = 0;
             printFlag = 0;
           } else if(key == '*'){
+            String ms = String(arr);
+            ms.remove(i);
+            i = 0;
             menuState--;
             printFlag = 0;
           }break;
@@ -338,6 +433,7 @@ void loop()
             testState++;
           }break;
         case 1: // Drivetrain running
+        //measureRMES(res, 20);
           break;
         
         case 2: // User/System pause
@@ -349,6 +445,9 @@ void loop()
       
     case 2: /*** Testing menu ***/
       break;
+    //case 3: /*** Test Cycle ***/
+      //cycleCount = 10;
+      //break;
     default:
       setup();
       break;
