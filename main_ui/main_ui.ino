@@ -6,6 +6,8 @@
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
 
+// :)
+
 File myFile;
 
 uint8_t REED_PIN = 2; // Pin connected to reed switch
