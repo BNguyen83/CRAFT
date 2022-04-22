@@ -7,16 +7,24 @@
 
 int interruptFlag = 0;
 
+
 void setupInterrupts(){
-	attachInterrupt(digitalPinToInterrupt(ESTOP), estop, RISING);
+	pinMode(ESTOP, INPUT);
+	pinMode(FAILSAFE, INPUT);
+	attachInterrupt(digitalPinToInterrupt(ESTOP), eStop1, CHANGE);
 	attachInterrupt(digitalPinToInterrupt(FAILSAFE), failsafe, RISING);
 }
 
-void eStop(){
+void eStop1(){
 	int flag = 0;
-	stopMotor(false);		// this should stop the motor
-	if (isRun() == false){
-		flag = 1;			// code for estop trigger
+	if(digitalRead(ESTOP) == 1){
+		stopMotor(false);		// this should stop the motor
+		if (isRun() == false){
+			flag = 1;			// code for estop trigger
+		}
+	}
+	else if(digitalRead(ESTOP) != 1){
+		flag = 0;
 	}
 }
 

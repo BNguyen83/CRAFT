@@ -47,7 +47,7 @@ double gainM[] = {45, 1, 1, 1, 1};
 
 void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
   // setup ISR register
-  pinMode(12, OUTPUT);
+  //pinMode(12, OUTPUT);
   //pinMode(STEP, OUTPUT);
 
   pinMode(DIR, OUTPUT);
