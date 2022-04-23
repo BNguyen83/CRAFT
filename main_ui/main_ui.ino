@@ -228,6 +228,7 @@ void loop()
             ms.remove(i);
             trvDistance = ms.toFloat();
             Serial.println(trvDistance); 
+            runMotor(trvDistance*-1); // move to new open position
             menuState++;
             i = 0;
             printFlag = 0;
@@ -472,17 +473,27 @@ void loop()
               bot.print("SD card detected! Test is starting...");
               
               myFile = SD.open("test.txt", FILE_WRITE);
-              myFile.println("testing 1, 2, 3.");
+              //myFile.println("testing 1, 2, 3.");
             }
             delay(3000);
             testState++;
           }break;
         case 1: // Drivetrain running
-          runMotor(trvDistance*-1);
-          runMotor(0);
-          measureRMES(res, 20);
+        //---------------------------------------------------------------------------
+          // cycle procedure
+          runMotor(0);    // move to closed position
+          
+          measureRMES(res, 20); // run resistance measurment
+
+          printToSD();        // print stuff to SD card
+          
           delay((dwellTime*1000)-3000);
+          
+          runMotor(trvDistance*-1);
+          
           cycleCounter++;
+
+          //------------------------------------------------------------------------
           top.clear();
           bot.clear();
           top.setCursor(1,0);
@@ -491,7 +502,9 @@ void loop()
           top.print(cycleCounter);
           if(cycleCounter >= cycleCount){
             mainState = 0;
+            menuState = 0;
             printFlag = 0;
+            myFile.close();
           }
           break;
         
@@ -550,6 +563,7 @@ void loop()
   } // This } is for 'switch(mainState)'
 }
 
+// this function will not work
 void enclosureReading() 
 {
   pinMode(REED_PIN, INPUT_PULLUP); //pull-up the reed switch pin internally.
@@ -560,4 +574,18 @@ void enclosureReading()
     Serial.println ("Please close it");
     delay(1000);
   }
+
+  
 }
+
+void printToSD(){
+    for(int g = 0; g < 20; g++){
+      // print resistance values
+      myFile.print(res[g]);
+      myFile.print(" ");
+    }
+    myFile.println();
+  }
+
+
+  

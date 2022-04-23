@@ -12,7 +12,7 @@ void eStop(){
 	Serial.println("Tripped!");
   interruptFlag = 2;
   Serial.println(interruptFlag);
- /*
+ 
 	if(digitalRead(ESTOP_) == 1){
 		stopMotor(false);		// this should stop the motor
 		if (isRun() == false){
@@ -23,7 +23,7 @@ void eStop(){
 		interruptFlag = 0;
 	}
 
-*/
+
 }
 
 void failsafe(){
