@@ -378,11 +378,11 @@ void loop()
           top.print("Set test parameters...");
     
           bot.setCursor(1,0); 
-          bot.print("Dwell time: ");}
+          bot.print("Dwell time (s): ");}
           printFlag = 1;
 
           if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(13+i,0);
+            bot.setCursor(17+i,0);
             arr[i] = key;
             bot.print(key);
             i++;
@@ -430,8 +430,8 @@ void loop()
         if(printFlag == 0){
           top.clear();
           bot.clear();
-          bot.setCursor(31,1);
-          bot.print("<#> Next");
+          bot.setCursor(21,1);
+          bot.print("<*> Back  <#> Next");
           top.setCursor(1,0);
           top.print("Beginning test...");
           bot.setCursor(1,0);
@@ -443,16 +443,22 @@ void loop()
               top.clear();
               bot.clear();
               bot.setCursor(31,1);
-              bot.print("<#> Next");
+              bot.print("<*> Back");
               top.setCursor(1,0);
               top.print("**ERROR**");
               bot.setCursor(1,0);
               bot.print("SD card not detected");
+              /*
+              if(key == '*'){
+                mainState = 0;
+                menuState = 9;
+              }
+              */
             } else{
               top.clear();
               bot.clear();
-              bot.setCursor(31,1);
-              bot.print("<#> Next");
+              bot.setCursor(29,1);
+              bot.print("<*> Cancel");
               top.setCursor(1,0);
               top.print("Beginning test...");
               bot.setCursor(1,0);
@@ -465,10 +471,10 @@ void loop()
             testState++;
           }break;
         case 1: // Drivetrain running
-          //runMotor(trvDistance*-1);
-          //runMotor(0);
+          runMotor(trvDistance*-1);
+          runMotor(0);
           measureRMES(res, 20);
-          delay(dwellTime*1000);
+          delay((dwellTime*1000)-3000);
           cycleCounter++;
           top.clear();
           bot.clear();
@@ -478,6 +484,7 @@ void loop()
           top.print(cycleCounter);
           if(cycleCounter >= cycleCount){
             mainState = 0;
+            printFlag = 0;
           }
           break;
         
@@ -500,30 +507,31 @@ void loop()
         bot.setCursor(31,1);
         bot.print("<#> Next");
         top.setCursor(1,0);
-        top.print("Set origin...");
+        top.print("Set origin (mm)... ");
         top.setCursor(1,1);
         top.print("<1>   5.0  <2>  1.0  <3>  0.5");
         bot.setCursor(1,0);
         bot.print("<4>  -0.5  <5> -1.0  <6> -5.0");
-
-        if(key == '1'){
-          jogMotor(5.0);
-        } else if(key == '2'){
-          jogMotor(1.0);
-        } else if (key == '3'){
-          jogMotor(0.5);
-        } else if (key == '4'){
-          jogMotor(-0.5);
-        } else if(key == '5'){
-          jogMotor(-1.0);
-        } else if(key == '6'){
-          jogMotor(-5.0);
-        } else if(key == '#'){
-          mainState = 0;
-          setOrigin();
-        }
-
-      }break;
+        printFlag = 1;
+      }
+      if(key == '1'){
+        jogMotor(5.0);
+      } else if(key == '2'){
+        jogMotor(1.0);
+      } else if (key == '3'){
+        jogMotor(0.5);
+      } else if (key == '4'){
+        jogMotor(-0.5);
+      } else if(key == '5'){
+        jogMotor(-1.0);
+      } else if(key == '6'){
+        jogMotor(-5.0);
+      } else if(key == '#'){
+        mainState = 0;
+        printFlag = 0;
+        setOrigin();
+      }
+      break;
       
     /******** Pause menu ********/
     case 4:
