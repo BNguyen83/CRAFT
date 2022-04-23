@@ -5,6 +5,7 @@
 #include "RMES.h" // Mark's header
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
+#include "force.h"
 
 // :)
 
@@ -68,6 +69,8 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
 int   cycleCounter = 0;
 
+int maxforce = 0;
+
 /*** State machine flags ***/
 int mainState = 0; //Main
 int menuState = 0; // Menu
@@ -85,7 +88,7 @@ void setup()
   
   RMESini(20);
   setupMC(8000, 4000, 0.8, 0.02);
-  
+  forceSetup();
   Serial.begin(9600);
 
   /* Other function initializations go here */
@@ -94,7 +97,11 @@ void setup()
 void loop() 
 {
   char key = myKeypad.getKey();
-  
+  /*
+  insertionForce(&maxforce);
+  Serial.print("Insertion Force (kg): ");
+  Serial.println(maxforce);
+  */
   switch(mainState)
   {  
     /********* Main menu *********/
@@ -221,6 +228,7 @@ void loop()
             ms.remove(i);
             trvDistance = ms.toFloat();
             Serial.println(trvDistance); 
+            runMotor(trvDistance*-1); // move to new open position
             menuState++;
             i = 0;
             printFlag = 0;
@@ -465,17 +473,27 @@ void loop()
               bot.print("SD card detected! Test is starting...");
               
               myFile = SD.open("test.txt", FILE_WRITE);
-              myFile.println("testing 1, 2, 3.");
+              //myFile.println("testing 1, 2, 3.");
             }
             delay(3000);
             testState++;
           }break;
         case 1: // Drivetrain running
-          runMotor(trvDistance*-1);
-          runMotor(0);
-          measureRMES(res, 20);
+        //---------------------------------------------------------------------------
+          // cycle procedure
+          runMotor(0);    // move to closed position
+          
+          measureRMES(res, 20); // run resistance measurment
+
+          printToSD();        // print stuff to SD card
+          
           delay((dwellTime*1000)-3000);
+          
+          runMotor(trvDistance*-1);
+          
           cycleCounter++;
+
+          //------------------------------------------------------------------------
           top.clear();
           bot.clear();
           top.setCursor(1,0);
@@ -484,7 +502,9 @@ void loop()
           top.print(cycleCounter);
           if(cycleCounter >= cycleCount){
             mainState = 0;
+            menuState = 0;
             printFlag = 0;
+            myFile.close();
           }
           break;
         
@@ -543,6 +563,7 @@ void loop()
   } // This } is for 'switch(mainState)'
 }
 
+// this function will not work
 void enclosureReading() 
 {
   pinMode(REED_PIN, INPUT_PULLUP); //pull-up the reed switch pin internally.
@@ -553,4 +574,18 @@ void enclosureReading()
     Serial.println ("Please close it");
     delay(1000);
   }
+
+  
 }
+
+void printToSD(){
+    for(int g = 0; g < 20; g++){
+      // print resistance values
+      myFile.print(res[g]);
+      myFile.print(" ");
+    }
+    myFile.println();
+  }
+
+
+  
