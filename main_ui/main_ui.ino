@@ -179,7 +179,7 @@ void loop()
           top.print("Set test parameters...");
     
           bot.setCursor(1,0); 
-          bot.print("Travel speed (in/s): ");} // in/s
+          bot.print("Travel speed (mm/s): ");} // in/s
           printFlag = 1;
 
           if(key > 45 && key < 58 && i < 9){
@@ -214,7 +214,7 @@ void loop()
           top.print("Set test parameters...");
     
           bot.setCursor(1,0); 
-          bot.print("Travel distance (in): ");} // 
+          bot.print("Travel distance (mm): ");} // 
           printFlag = 1;
 
           if(key > 45 && key < 58 && i < 9){
@@ -227,6 +227,9 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             trvDistance = ms.toFloat();
+            if(trvDistance > 30){
+              trvDistance = 30;
+            }
             Serial.println(trvDistance); 
             runMotor(trvDistance*-1); // move to new open position
             menuState++;
@@ -451,22 +454,23 @@ void loop()
               top.clear();
               bot.clear();
               bot.setCursor(31,1);
-              bot.print("<*> Back");
+              bot.print("<#> Next");
               top.setCursor(1,0);
               top.print("**ERROR**");
               bot.setCursor(1,0);
               bot.print("SD card not detected");
-              /*
-              if(key == '*'){
+              
+              if(key == '#'){
                 mainState = 0;
                 menuState = 9;
+                printFlag = 0;
               }
-              */
+              
             } else{
               top.clear();
               bot.clear();
-              bot.setCursor(29,1);
-              bot.print("<*> Cancel");
+              bot.setCursor(24,1);
+              bot.print("<#> Hell yeah");
               top.setCursor(1,0);
               top.print("Beginning test...");
               bot.setCursor(1,0);
