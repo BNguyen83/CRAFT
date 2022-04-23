@@ -5,6 +5,7 @@
 #include "RMES.h" // Mark's header
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
+#include "force.h"
 
 // :)
 
@@ -68,6 +69,8 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
 int   cycleCounter = 0;
 
+int maxforce = 0;
+
 /*** State machine flags ***/
 int mainState = 0; //Main
 int menuState = 0; // Menu
@@ -85,7 +88,7 @@ void setup()
   
   RMESini(20);
   setupMC(8000, 4000, 0.8, 0.02);
-  
+  forceSetup();
   Serial.begin(9600);
 
   /* Other function initializations go here */
@@ -94,7 +97,11 @@ void setup()
 void loop() 
 {
   char key = myKeypad.getKey();
-  
+  /*
+  insertionForce(&maxforce);
+  Serial.print("Insertion Force (kg): ");
+  Serial.println(maxforce);
+  */
   switch(mainState)
   {  
     /********* Main menu *********/
