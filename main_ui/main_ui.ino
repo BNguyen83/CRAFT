@@ -2,7 +2,7 @@
 #include "Keypad.h"
 #include <SPI.h> // SD card headers
 #include <SD.h>
-//#include "RMES.h" // Mark's header
+#include "RMES.h" // Mark's header
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
 
@@ -65,7 +65,7 @@ float minRemForce; // Removal force
 float maxInSpeed;  // Insertion speed 
 float dwellTime;
 
-int   res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
+float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
 int   cycleCounter = 0;
 
 /*** State machine flags ***/
@@ -83,7 +83,7 @@ void setup()
   top.begin(40,2);
   bot.begin(40,2);
   
- // RMESini(20);
+  RMESini(20);
   setupMC(8000, 4000, 0.8, 0.02);
   
   Serial.begin(9600);
@@ -103,6 +103,7 @@ void loop()
       {
         case 0: // Main menu prompt
         if (printFlag == 0){
+          top.clear();
           bot.clear();
           top.setCursor(1,0);
           top.print("Welcome to C.R.A.F.T.!");
@@ -437,20 +438,36 @@ void loop()
           bot.print("Insert SD card now");}
           printFlag = 1;
           if(key == '#'){
-            //printFlag = 0;
-            //if(!SD.begin(4)){
-              /* If it returns true it initialized */
-              /* If it didn't, testState = 0 */
-            //}
-            //myFile = SD.open("test.txt", FILE_WRITE);
-            //myFile.println("testing 1, 2, 3.");
-
+            printFlag = 0;
+            if(!SD.begin(4)){
+              top.clear();
+              bot.clear();
+              bot.setCursor(31,1);
+              bot.print("<#> Next");
+              top.setCursor(1,0);
+              top.print("**ERROR**");
+              bot.setCursor(1,0);
+              bot.print("SD card not detected");
+            } else{
+              top.clear();
+              bot.clear();
+              bot.setCursor(31,1);
+              bot.print("<#> Next");
+              top.setCursor(1,0);
+              top.print("Beginning test...");
+              bot.setCursor(1,0);
+              bot.print("SD card detected! Test is starting...");
+              
+              myFile = SD.open("test.txt", FILE_WRITE);
+              myFile.println("testing 1, 2, 3.");
+            }
+            delay(3000);
             testState++;
           }break;
         case 1: // Drivetrain running
-          runMotor(trvDistance*-1);
-          runMotor(0);
-          //measureRMES(res, 20.0);
+          //runMotor(trvDistance*-1);
+          //runMotor(0);
+          measureRMES(res, 20);
           delay(dwellTime*1000);
           cycleCounter++;
           top.clear();
