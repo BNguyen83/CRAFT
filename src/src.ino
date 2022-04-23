@@ -7,6 +7,9 @@ void setup() {
   // put your setup code here, to run once:
   setupMC(8000, 4000, 0.8, 0.02);
   setupInterrupts();
+
+
+  
   Serial.begin(9600);
 }
 
@@ -14,18 +17,20 @@ void loop() {
   // put your main code here, to run repeatedly:
   
   //Serial.println(" move");
-  //runMotor(0);
-  //runMotor(-10);
+  runMotor(0);
+  runMotor(-10);
   
   //flag = 0;
   checkFlag();
   delay(1000);
 }
-
+void test(){
+  Serial.println("Emergency Stop Active");
+}
 void checkFlag(){
   flag = interruptHandler();
-  //Serial.print("flag: ");
-  //Serial.println(flag);
+  Serial.print("flag: ");
+  Serial.println(flag);
   switch (flag){
     case 0: break;
     case 1: Serial.println("Emergency Stop Active"); break;

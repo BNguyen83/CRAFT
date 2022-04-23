@@ -24,7 +24,8 @@ double jogMotor(double offsetPos){
 }
 
 void stopMotor(bool mFlag){
-	motorFlag = mFlag;
+	//motorFlag = mFlag;
+  disableMotor(mFlag);
 }
 
 int changeTopSpeed(double speedRatio){

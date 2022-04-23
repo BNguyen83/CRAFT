@@ -60,6 +60,7 @@ void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
   attachInterrupt(digitalPinToInterrupt(ENC_B), motorControlEncoder, CHANGE);
   digitalWrite(EN, LOW);
   //Serial.begin(230400);
+  Serial.begin(9600);
 
 	MAXSPEED = 500000 / MAXS;
 	MINSPEED = 500000 / MINS;
@@ -91,12 +92,15 @@ void setOrigin() {
 void disableMotor(bool state){
   // use this to stop the motor
     killMotor = state;
+    Serial.println("kill motor");
     if (state) {
         isRunning = false;
+        Serial.println("what i want");
         TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKDIS;
     }
     else {
         isRunning = true;
+        Serial.println("big no no");
         TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;
     }
   

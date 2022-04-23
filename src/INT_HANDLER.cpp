@@ -9,10 +9,11 @@ int interruptFlag = 0;
 
 
 void eStop(){
-	Serial.println("Tripped!");
-  interruptFlag = 2;
-  Serial.println(interruptFlag);
- /*
+	//Serial.println("Tripped!");
+  interruptFlag = 1;
+  //Serial.println(interruptFlag);
+  stopMotor(true);
+ 
 	if(digitalRead(ESTOP_) == 1){
 		stopMotor(false);		// this should stop the motor
 		if (isRun() == false){
@@ -23,12 +24,12 @@ void eStop(){
 		interruptFlag = 0;
 	}
 
-*/
+
 }
 
 void failsafe(){
 	
-	//stopMotor(false);
+	stopMotor(false);
 	
 	interruptFlag = 2;			// code for failsafe trigger
 	
@@ -42,7 +43,7 @@ void setupInterrupts(){
   Serial.begin(9600);
   pinMode(ESTOP_, INPUT);
   pinMode(FAILSAFE_, INPUT);
-  attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, RISING);
+  attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, CHANGE);
   attachInterrupt(digitalPinToInterrupt(FAILSAFE_), failsafe, RISING);
   delay(1000);
 }
