@@ -42,21 +42,15 @@ void measureInsertion(int* maxForce, int* ignoredForce) {
   if (newDataReady) {
     if (millis() > t + settlingTime) {
       float i = LoadCell.getData();
-       if (i < user){
-        if (i < *maxForce || *ignoredForce > *maxForce){
-          *ignoredForce = i;
-        }
-        else if (i > *maxForce ) {
+        if (i >= *maxForce ) {
           *maxForce = i;
         }
+        else if(i > *maxForce) {
+        LoadCell.powerDown();  
+        }
        }
-      else if (i > user){
-      LoadCell.powerDown();
-      Serial.println("User Condition is met");
-      }
       newDataReady = 0;
       t = millis();
-    }
   }
 }
 

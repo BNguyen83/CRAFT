@@ -488,12 +488,14 @@ void loop()
           runMotor(0);    // move to closed position
           
           measureRMES(res, 20); // run resistance measurment
-
-          printToSD();        // print stuff to SD card
           
           delay((dwellTime*1000)-3000);
           
-          runMotor(trvDistance*-1);
+          runMotor(trvDistance * -1);
+
+          // check parameters
+
+          printToSD();        // print stuff to SD card
           
           cycleCounter++;
 
@@ -583,11 +585,17 @@ void enclosureReading()
 }
 
 void printToSD(){
+    myFile.print(cycleCount);
+    myFile.print("|");
     for(int g = 0; g < 20; g++){
       // print resistance values
       myFile.print(res[g]);
       myFile.print(" ");
     }
+    myFile.print("|");
+    // print removal force
+    // print removal force
+    
     myFile.println();
   }
 
