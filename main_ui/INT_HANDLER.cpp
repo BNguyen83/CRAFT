@@ -9,12 +9,12 @@ int interruptFlag = 0;
 
 
 void eStop(){
-	Serial.println("Tripped!");
+	//Serial.println("Tripped!");
   interruptFlag = 2;
-  Serial.println(interruptFlag);
+  //Serial.println(interruptFlag);
  
 	if(digitalRead(ESTOP_) == 1){
-		stopMotor(false);		// this should stop the motor
+		//stopMotor(false);		// this should stop the motor
 		if (isRun() == false){
 			interruptFlag = 1;			// code for estop trigger
 		}
