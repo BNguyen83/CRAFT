@@ -3,8 +3,6 @@
 #include "force.h"
 #include "config.h"
 
-
-
 const int HX711_dout = 2; //mcu > HX711 dout pin
 const int HX711_sck = 3; //mcu > HX711 sck pin
 float calibrationValue = 88.47; // set the calibration value in the sketch
@@ -12,8 +10,8 @@ float calibrationValue = 88.47; // set the calibration value in the sketch
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
 
 unsigned long t = 0;
-// volatile boolean newDataReady; ---- uncomment this when using interrupt 
-int user = 400;
+// volatile boolean newDataReady; ---- uncomment this when using interrupt
+int overload = 10000;
 
 void forceSetup() {
   Serial.begin(57600);
@@ -33,29 +31,22 @@ void forceSetup() {
 //  }
 //}
 
-void measureInsertion(int* maxForce, int* ignoredForce) {
+void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
   if (LoadCell.update()) newDataReady = 1;
-  
   // get smoothed value from the dataset:
   if (newDataReady) {
     if (millis() > t + settlingTime) {
       float i = LoadCell.getData();
-       if (i < user){
-        if (i < *maxForce || *ignoredForce > *maxForce){
-          *ignoredForce = i;
-        }
-        else if (i > *maxForce ) {
-          *maxForce = i;
-        }
-       }
-      else if (i > user){
-      LoadCell.powerDown();
-      Serial.println("User Condition is met");
+      if (i >= *maxForce) {
+        *maxForce = i;
+        newDataReady = 0;
+        t = millis();
       }
-      newDataReady = 0;
-      t = millis();
+      else if (i < *maxForce || *maxForce > overload) {
+        LoadCell.powerDown();
+      }
     }
   }
 }
@@ -63,24 +54,16 @@ void measureInsertion(int* maxForce, int* ignoredForce) {
 void measureRemoval(int* minForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
-  int minUser = 10;
   if (LoadCell.update()) newDataReady = 1;
-  
   // get smoothed value from the dataset:
   if (newDataReady) {
     if (millis() > t + settlingTime) {
       float i = LoadCell.getData();
-       if (i > minUser){
-        if (i > *minForce ) {
-          *minForce = i;
-        }
-       }
-      else if (i <= minUser && *minForce < minUser){
-      LoadCell.powerDown();
-      Serial.println("User Condition is met");
+      if (i > *minForce ) {
+              *minForce = i;
+        newDataReady = 0;
+        t = millis();
       }
-      newDataReady = 0;
-      t = millis();
     }
   }
 }

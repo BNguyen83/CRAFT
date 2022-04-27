@@ -8,14 +8,14 @@ void setup() {
 }
 
 int maxForce = 0;
-int ignoredForce = 0;
 int minForce = 0;
 
 void loop() {
-  measureInsertion(&maxForce, &ignoredForce);
-  Serial.print("Insertion Force (kg): ");
+  measureInsertion(&maxForce);
+  Serial.print("Insertion Force (g): ");
   Serial.println(maxForce);
-
   measureRemoval(&minForce);
+  Serial.print("Removal Force (g): ");
+  Serial.println(minForce);
 }
  
