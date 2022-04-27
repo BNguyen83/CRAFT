@@ -5,7 +5,8 @@
 #include "RMES.h" // Mark's header
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
-#include "force.h"
+//#include "INT_HANDLER.h"
+#include "force.h" // Belinda's header
 
 // :)
 
@@ -67,7 +68,7 @@ float maxInSpeed;  // Insertion speed
 float dwellTime;
 
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
-int   cycleCounter = 0;
+int   cycleCounter = 1;
 
 int maxforce = 0;
 
@@ -87,7 +88,7 @@ void setup()
   bot.begin(40,2);
   
   RMESini(20);
-  setupMC(8000, 4000, 0.8, 0.02);
+  setupMC(11000, 4000, 0.8, 0.02);
   forceSetup();
   Serial.begin(9600);
 
@@ -108,7 +109,51 @@ void loop()
     case 0:
       switch(menuState) // Sub-state
       {
-        case 0: // Main menu prompt
+        case 0: // check SD card
+        if(printFlag == 0){
+          top.clear();
+          bot.clear();
+          bot.setCursor(31,1);
+          bot.print("<#> Next");
+          top.setCursor(1,0);
+          top.print("Welcome to C.R.A.F.T.");
+          bot.setCursor(1,0);
+          bot.print("Insert SD card now");}
+          printFlag = 1;
+          if(key == '#'){
+            printFlag = 0;
+            if(!SD.begin(4)){
+              top.clear();
+              bot.clear();
+              bot.setCursor(31,1);
+              bot.print("<#> Next");
+              top.setCursor(1,0);
+              top.print("**ERROR**");
+              bot.setCursor(1,0);
+              bot.print("SD card not detected");
+              
+              if(key == '#'){
+                menuState = 0;
+                printFlag = 0;
+              }
+              
+            } else{
+              top.clear();
+              bot.clear();
+              bot.setCursor(31,1);
+              bot.print("<#> Nice");
+              top.setCursor(1,0);
+              top.print("Welcome to C.R.A.F.T.");
+              bot.setCursor(1,0);
+              bot.print("SD card detected!");
+              
+              myFile = SD.open("test.txt", FILE_WRITE);
+              //myFile.println("testing 1, 2, 3.");
+            }
+            delay(1000);
+            menuState++;
+          }break;
+        case 1: // Main menu prompt
         if (printFlag == 0){
           top.clear();
           bot.clear();
@@ -120,21 +165,24 @@ void loop()
           bot.setCursor(1,0);
           bot.print("<A> Begin test  <B> Test Cycle ");
           bot.setCursor(1,1);
-          bot.print("<C> Set origin");
+          bot.print("<C> Set Origin  <D> Set Force");
         }
           printFlag = 1;
           if(key == 'A'){
             menuState++;
             printFlag = 0;
-          } else if(key == 'B'){
-            //mainState += 2;
+          } else if (key == 'B'){
+            //mainState = 2;
             printFlag = 0;
-          } else if(key == 'C'){
-            mainState += 3;
+          } else if (key == 'C'){
+            mainState = 3;
+            printFlag = 0;
+          } else if (key == 'D'){
+            //mainState = 4;
             printFlag = 0;
           }
           break;
-        case 1: // Cycle count
+        case 2: // Cycle count
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -169,7 +217,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 2: // Travel speed
+        case 3: // Travel speed
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -204,7 +252,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 3: // Travel distance
+        case 4: // Travel distance
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -242,7 +290,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 4: // Max resistance
+        case 5: // Max resistance
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -276,7 +324,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 5: // Max insertion force
+        case 6: // Max insertion force
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -311,7 +359,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 6: // Minimum removal force
+        case 7: // Minimum removal force
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -345,7 +393,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 7: // Insertion speed
+        case 8: // Insertion speed
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -379,7 +427,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 8: // Dwell time
+        case 9: // Dwell time
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -414,7 +462,7 @@ void loop()
             menuState--;
             printFlag = 0;
           }break;
-        case 9: // Confirm test
+        case 10: // Confirm test
         if(printFlag == 0){
           top.clear();
           bot.clear();
@@ -425,7 +473,7 @@ void loop()
           printFlag = 1;
 
           if(key == '#'){
-            mainState += 1;
+            mainState = 1;
             printFlag = 0;
           } else if(key == '*'){
             menuState--;
@@ -437,75 +485,35 @@ void loop()
     case 1:
       switch(testState) // Sub-state
       {
-        case 0: // Check for SD card
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Beginning test...");
-          bot.setCursor(1,0);
-          bot.print("Insert SD card now");}
-          printFlag = 1;
-          if(key == '#'){
-            printFlag = 0;
-            if(!SD.begin(4)){
-              top.clear();
-              bot.clear();
-              bot.setCursor(31,1);
-              bot.print("<#> Next");
-              top.setCursor(1,0);
-              top.print("**ERROR**");
-              bot.setCursor(1,0);
-              bot.print("SD card not detected");
-              
-              if(key == '#'){
-                mainState = 0;
-                menuState = 9;
-                printFlag = 0;
-              }
-              
-            } else{
-              top.clear();
-              bot.clear();
-              bot.setCursor(24,1);
-              bot.print("<#> Hell yeah");
-              top.setCursor(1,0);
-              top.print("Beginning test...");
-              bot.setCursor(1,0);
-              bot.print("SD card detected! Test is starting...");
-              
-              myFile = SD.open("test.txt", FILE_WRITE);
-              //myFile.println("testing 1, 2, 3.");
-            }
-            delay(3000);
-            testState++;
-          }break;
-        case 1: // Drivetrain running
+        case 0: // Drivetrain running
+          if(printFlag == 0){
+            top.clear();
+            bot.clear();
+            top.setCursor(1,0);
+            top.print("Total cycles: "); 
+            top.setCursor(15,0);
+            top.print(cycleCount);
+            bot.setCursor(1,0);
+            bot.print("Current cycle: ");
+            bot.setCursor(16,0);
+            bot.print(cycleCounter);
+            //printFlag = 1;
+          }
         //---------------------------------------------------------------------------
           // cycle procedure
           runMotor(0);    // move to closed position
           
           measureRMES(res, 20); // run resistance measurment
-          
-          delay((dwellTime*1000)-3000);
-          
-          runMotor(trvDistance * -1);
-
-          // check parameters
 
           printToSD();        // print stuff to SD card
+          
+          delay(dwellTime*1000);
+          
+          runMotor(trvDistance*-1);
           
           cycleCounter++;
 
           //------------------------------------------------------------------------
-          top.clear();
-          bot.clear();
-          top.setCursor(1,0);
-          top.print("Cycle: ");
-          top.setCursor(8,0);
-          top.print(cycleCounter);
           if(cycleCounter >= cycleCount){
             mainState = 0;
             menuState = 0;
@@ -514,10 +522,10 @@ void loop()
           }
           break;
         
-        case 2: // User/System pause
+        case 1: // User/System pause
           break;
 
-        case 3: // Emergency pause
+        case 2: // Emergency pause
           break;
       }break; // This } is for 'switch(testState)'
     
@@ -535,34 +543,39 @@ void loop()
         top.setCursor(1,0);
         top.print("Set origin (mm)... ");
         top.setCursor(1,1);
-        top.print("<1>   5.0  <2>  1.0  <3>  0.5");
+        top.print("<1>  5.0  <2>  1.0  <3>  0.5");
         bot.setCursor(1,0);
-        bot.print("<4>  -0.5  <5> -1.0  <6> -5.0");
+        bot.print("<4> -0.5  <5> -1.0  <6> -5.0");
+        bot.setCursor(1,1);
+        bot.print("<7>  0.1  <8> -0.1");
         printFlag = 1;
       }
-      if(key == '1'){
+      if (key == '1'){
         jogMotor(5.0);
-      } else if(key == '2'){
+      } else if (key == '2'){
         jogMotor(1.0);
       } else if (key == '3'){
         jogMotor(0.5);
       } else if (key == '4'){
         jogMotor(-0.5);
-      } else if(key == '5'){
+      } else if (key == '5'){
         jogMotor(-1.0);
-      } else if(key == '6'){
+      } else if (key == '6'){
         jogMotor(-5.0);
-      } else if(key == '#'){
+      } else if (key == '7'){
+        jogMotor(0.1);
+      } else if (key == '8'){
+        jogMotor(-0.1);
+      } else if (key == '#'){
         mainState = 0;
         printFlag = 0;
         setOrigin();
       }
       break;
       
-    /******** Pause menu ********/
-    case 4:
-      
-      break;
+    /******** Set Force ********/
+    //case 4:
+      //break;
     default:
       setup();
       break;
@@ -585,17 +598,11 @@ void enclosureReading()
 }
 
 void printToSD(){
-    myFile.print(cycleCount);
-    myFile.print("|");
     for(int g = 0; g < 20; g++){
       // print resistance values
       myFile.print(res[g]);
       myFile.print(" ");
     }
-    myFile.print("|");
-    // print removal force
-    // print removal force
-    
     myFile.println();
   }
 
