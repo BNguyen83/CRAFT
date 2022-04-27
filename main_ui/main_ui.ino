@@ -51,7 +51,7 @@ const byte COLS = 4; // four columns
 char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', '.'} };
 
 // Arduino digital pin connection
-byte rowPins[ROWS] = {K1, K2, K8, K7}; 
+byte rowPins[ROWS] = {K1, K2, K8, K7};
 byte colPins[COLS] = {K3, K4, K5, K6};
 
 Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
@@ -64,10 +64,10 @@ float trvDistance; // Travel Distance
 int   maxRes;      // Max resistance
 float maxInForce;  // Insertion force
 float minRemForce; // Removal force
-float maxInSpeed;  // Insertion speed 
+float maxInSpeed;  // Insertion speed
 float dwellTime;
 
-float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 , 0,0, 0, 0};
+float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 1;
 
 int maxforce = 0;
@@ -81,501 +81,511 @@ int printFlag = 0; // Keypad
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int i = 0;
 
-void setup() 
-{ 
+void setup()
+{
   // Initialize top and bottom LCD
-  top.begin(40,2);
-  bot.begin(40,2);
-  
+  top.begin(40, 2);
+  bot.begin(40, 2);
+
   RMESini(20);
-  setupMC(11000, 4000, 0.8, 0.02);
+  setupMC(10000, 4000, 0.8, 0.02);
   forceSetup();
   Serial.begin(9600);
 
   /* Other function initializations go here */
 }
 
-void loop() 
+void loop()
 {
   char key = myKeypad.getKey();
   /*
-  insertionForce(&maxforce);
-  Serial.print("Insertion Force (kg): ");
-  Serial.println(maxforce);
+    insertionForce(&maxforce);
+    Serial.print("Insertion Force (kg): ");
+    Serial.println(maxforce);
   */
-  switch(mainState)
-  {  
+  switch (mainState)
+  {
     /********* Main menu *********/
     case 0:
-      switch(menuState) // Sub-state
+      switch (menuState) // Sub-state
       {
         case 0: // check SD card
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(31,1);
-          bot.print("<#> Next");
-          top.setCursor(1,0);
-          top.print("Welcome to C.R.A.F.T.");
-          bot.setCursor(1,0);
-          bot.print("Insert SD card now");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(31, 1);
+            bot.print("<#> Next");
+            top.setCursor(1, 0);
+            top.print("Welcome to C.R.A.F.T.");
+            bot.setCursor(1, 0);
+            bot.print("Insert SD card now");
+          }
           printFlag = 1;
-          if(key == '#'){
+          if (key == '#') {
             printFlag = 0;
-            if(!SD.begin(4)){
+            if (!SD.begin(4)) {
               top.clear();
               bot.clear();
-              bot.setCursor(31,1);
+              bot.setCursor(31, 1);
               bot.print("<#> Next");
-              top.setCursor(1,0);
+              top.setCursor(1, 0);
               top.print("**ERROR**");
-              bot.setCursor(1,0);
+              bot.setCursor(1, 0);
               bot.print("SD card not detected");
-              
-              if(key == '#'){
+
+              if (key == '#') {
                 menuState = 0;
                 printFlag = 0;
               }
-              
-            } else{
+
+            } else {
               top.clear();
               bot.clear();
-              bot.setCursor(31,1);
+              bot.setCursor(31, 1);
               bot.print("<#> Nice");
-              top.setCursor(1,0);
+              top.setCursor(1, 0);
               top.print("Welcome to C.R.A.F.T.");
-              bot.setCursor(1,0);
+              bot.setCursor(1, 0);
               bot.print("SD card detected!");
-              
+
               myFile = SD.open("test.txt", FILE_WRITE);
               //myFile.println("testing 1, 2, 3.");
             }
             delay(1000);
             menuState++;
-          }break;
+          } break;
         case 1: // Main menu prompt
-        if (printFlag == 0){
-          top.clear();
-          bot.clear();
-          top.setCursor(1,0);
-          top.print("Welcome to C.R.A.F.T.!");
-          top.setCursor(1,1);
-          top.print("Connection Resistance And Force Tester ");
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            top.setCursor(1, 0);
+            top.print("Welcome to C.R.A.F.T.!");
+            top.setCursor(1, 1);
+            top.print("Connection Resistance And Force Tester ");
 
-          bot.setCursor(1,0);
-          bot.print("<A> Begin test  <B> Test Cycle ");
-          bot.setCursor(1,1);
-          bot.print("<C> Set Origin  <D> Set Force");
-        }
+            bot.setCursor(1, 0);
+            bot.print("<A> Begin test  <B> Test Cycle ");
+            bot.setCursor(1, 1);
+            bot.print("<C> Set Origin  <D> Set Force");
+          }
           printFlag = 1;
-          if(key == 'A'){
+          if (key == 'A') {
             menuState++;
             printFlag = 0;
-          } else if (key == 'B'){
+          } else if (key == 'B') {
             //mainState = 2;
             printFlag = 0;
-          } else if (key == 'C'){
+          } else if (key == 'C') {
             mainState = 3;
             printFlag = 0;
-          } else if (key == 'D'){
+          } else if (key == 'D') {
             //mainState = 4;
             printFlag = 0;
           }
           break;
         case 2: // Cycle count
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Cycle count: ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Cycle count: ");
+          }
           printFlag = 1;
 
-          if(key > 47 && key < 58 && i < 9){
-            bot.setCursor(14+i,0);
+          if (key > 47 && key < 58 && i < 9) {
+            bot.setCursor(14 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
 
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            cycleCount = ms.toInt(); 
+            cycleCount = ms.toInt();
             Serial.println(cycleCount);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 3: // Travel speed
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Travel speed (mm/s): ");} // in/s
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Travel speed (mm/s): ");
+          } // in/s
           printFlag = 1;
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(22+i,0);
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(22 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
 
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             trvSpeed = ms.toFloat();
-            Serial.println(trvSpeed); 
+            Serial.println(trvSpeed);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 4: // Travel distance
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Travel distance (mm): ");} // 
-          printFlag = 1;
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(23+i,0);
+            bot.setCursor(1, 0);
+            bot.print("Travel distance (mm): "); //
+            printFlag = 1;
+          }
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(23 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             trvDistance = ms.toFloat();
-            if(trvDistance > 30){
+            if (trvDistance > 30) {
               trvDistance = 30;
             }
-            Serial.println(trvDistance); 
-            runMotor(trvDistance*-1); // move to new open position
+            Serial.println(trvDistance);
+            runMotor(trvDistance * -1); // move to new open position
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          }
+          else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 5: // Max resistance
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Resistance (mOhms): ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Resistance (mOhms): ");
+          }
           printFlag = 1;
 
-          if(key > 47 && key < 58 && i < 9){
-            bot.setCursor(21+i,0);
+          if (key > 47 && key < 58 && i < 9) {
+            bot.setCursor(21 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             maxRes = ms.toInt();
-            Serial.println(maxRes); 
+            Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 6: // Max insertion force
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Insertion force (kg): ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Insertion force (kg): ");
+          }
           printFlag = 1;
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(23+i,0);
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(23 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
 
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             maxInForce = ms.toFloat();
-            Serial.println(maxInForce); 
+            Serial.println(maxInForce);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 7: // Minimum removal force
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Removal force (kg): ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Removal force (kg): ");
+          }
           printFlag = 1;
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(21+i,0);
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(21 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             minRemForce = ms.toFloat();
-            Serial.println(minRemForce); 
+            Serial.println(minRemForce);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 8: // Insertion speed
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Insertion speed: ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Insertion speed: ");
+          }
           printFlag = 1;
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(18+i,0);
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(18 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             maxInSpeed = ms.toFloat();
-            Serial.println(maxInSpeed); 
+            Serial.println(maxInSpeed);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 9: // Dwell time
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(21,1);
-          bot.print("<*> Back  <#> Next");
-          top.setCursor(1,0);
-          top.print("Set test parameters...");
-    
-          bot.setCursor(1,0); 
-          bot.print("Dwell time (s): ");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(21, 1);
+            bot.print("<*> Back  <#> Next");
+            top.setCursor(1, 0);
+            top.print("Set test parameters...");
+
+            bot.setCursor(1, 0);
+            bot.print("Dwell time (s): ");
+          }
           printFlag = 1;
 
-          if(key > 45 && key < 58 && i < 9){
-            bot.setCursor(17+i,0);
+          if (key > 45 && key < 58 && i < 9) {
+            bot.setCursor(17 + i, 0);
             arr[i] = key;
             bot.print(key);
             i++;
           }
 
-          if(key == '#'){
+          if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            dwellTime = ms.toFloat(); 
+            dwellTime = ms.toFloat();
             Serial.println(dwellTime);
             menuState++;
             i = 0;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             String ms = String(arr);
             ms.remove(i);
             i = 0;
             menuState--;
             printFlag = 0;
-          }break;
+          } break;
         case 10: // Confirm test
-        if(printFlag == 0){
-          top.clear();
-          bot.clear();
-          bot.setCursor(24,1);
-          bot.print("<*> No  <#> Yes");
-          top.setCursor(1,0);
-          top.print("Begin test?");}
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(24, 1);
+            bot.print("<*> No  <#> Yes");
+            top.setCursor(1, 0);
+            top.print("Begin test?");
+          }
           printFlag = 1;
 
-          if(key == '#'){
+          if (key == '#') {
             mainState = 1;
             printFlag = 0;
-          } else if(key == '*'){
+          } else if (key == '*') {
             menuState--;
             printFlag = 0;
-          }break;
-        }break; // This } is for 'switch(menuState)'
+          } break;
+      } break; // This } is for 'switch(menuState)'
 
     /********* Testing *********/
     case 1:
-      switch(testState) // Sub-state
+      switch (testState) // Sub-state
       {
         case 0: // Drivetrain running
-          if(printFlag == 0){
+          if (printFlag == 0) {
             top.clear();
             bot.clear();
-            top.setCursor(1,0);
-            top.print("Total cycles: "); 
-            top.setCursor(15,0);
+            top.setCursor(1, 0);
+            top.print("Total cycles: ");
+            top.setCursor(15, 0);
             top.print(cycleCount);
-            bot.setCursor(1,0);
+            bot.setCursor(1, 0);
             bot.print("Current cycle: ");
-            bot.setCursor(16,0);
+            bot.setCursor(16, 0);
             bot.print(cycleCounter);
             //printFlag = 1;
           }
-        //---------------------------------------------------------------------------
+          //---------------------------------------------------------------------------
           // cycle procedure
           runMotor(0);    // move to closed position
-          
+
           measureRMES(res, 20); // run resistance measurment
 
           printToSD();        // print stuff to SD card
-          
-          delay(dwellTime*1000);
-          
-          runMotor(trvDistance*-1);
-          
+
+          delay(dwellTime * 1000);
+
+          runMotor(trvDistance * -1);
+
           cycleCounter++;
 
           //------------------------------------------------------------------------
-          if(cycleCounter >= cycleCount){
+          if (cycleCounter >= cycleCount) {
             mainState = 0;
             menuState = 0;
             printFlag = 0;
             myFile.close();
           }
           break;
-        
+
         case 1: // User/System pause
           break;
 
         case 2: // Emergency pause
           break;
-      }break; // This } is for 'switch(testState)'
-    
+      } break; // This } is for 'switch(testState)'
+
     /******** Test Cycle ********/
     //case 2:
-      //break;
+    //break;
 
     /********* Set origin *********/
     case 3:
-      if(printFlag == 0){
+      if (printFlag == 0) {
         top.clear();
         bot.clear();
-        bot.setCursor(31,1);
+        bot.setCursor(31, 1);
         bot.print("<#> Next");
-        top.setCursor(1,0);
+        top.setCursor(1, 0);
         top.print("Set origin (mm)... ");
-        top.setCursor(1,1);
+        top.setCursor(1, 1);
         top.print("<1>  5.0  <2>  1.0  <3>  0.5");
-        bot.setCursor(1,0);
+        bot.setCursor(1, 0);
         bot.print("<4> -0.5  <5> -1.0  <6> -5.0");
-        bot.setCursor(1,1);
+        bot.setCursor(1, 1);
         bot.print("<7>  0.1  <8> -0.1");
         printFlag = 1;
       }
-      if (key == '1'){
+      if (key == '1') {
         jogMotor(5.0);
-      } else if (key == '2'){
+      } else if (key == '2') {
         jogMotor(1.0);
-      } else if (key == '3'){
+      } else if (key == '3') {
         jogMotor(0.5);
-      } else if (key == '4'){
+      } else if (key == '4') {
         jogMotor(-0.5);
-      } else if (key == '5'){
+      } else if (key == '5') {
         jogMotor(-1.0);
-      } else if (key == '6'){
+      } else if (key == '6') {
         jogMotor(-5.0);
-      } else if (key == '7'){
+      } else if (key == '7') {
         jogMotor(0.1);
-      } else if (key == '8'){
+      } else if (key == '8') {
         jogMotor(-0.1);
-      } else if (key == '#'){
+      } else if (key == '#') {
         mainState = 0;
         printFlag = 0;
         setOrigin();
       }
       break;
-      
+
     /******** Set Force ********/
     //case 4:
-      //break;
+    //break;
     default:
       setup();
       break;
@@ -583,7 +593,7 @@ void loop()
 }
 
 // this function will not work
-void enclosureReading() 
+void enclosureReading()
 {
   pinMode(REED_PIN, INPUT_PULLUP); //pull-up the reed switch pin internally.
   int proximity = digitalRead(REED_PIN); // Read the state of the switch
@@ -594,17 +604,14 @@ void enclosureReading()
     delay(1000);
   }
 
-  
+
 }
 
-void printToSD(){
-    for(int g = 0; g < 20; g++){
-      // print resistance values
-      myFile.print(res[g]);
-      myFile.print(" ");
-    }
-    myFile.println();
+void printToSD() {
+  for (int g = 0; g < 20; g++) {
+    // print resistance values
+    myFile.print(res[g]);
+    myFile.print(" ");
   }
-
-
-  
+  myFile.println();
+}

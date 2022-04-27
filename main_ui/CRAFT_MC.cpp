@@ -18,7 +18,7 @@
 double MAXACCEL = 0.2;
 
 double MAXSPEED = 100;                 // arbitrary max speed value 50 is about as fast as it can go in no load
-double MINSPEED = 500;                 
+double MINSPEED = 500;
 double Ts = 0.00005;
 double tolerance = 0.1;
 double speedRatio = 0;
@@ -61,10 +61,10 @@ void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
   digitalWrite(EN, LOW);
   //Serial.begin(230400);
 
-	MAXSPEED = 500000 / MAXS;
-	MINSPEED = 500000 / MINS;
-	MAXACCEL = ACCEL;
-	tolerance = tol;
+  MAXSPEED = 500000 / MAXS;
+  MINSPEED = 500000 / MINS;
+  MAXACCEL = ACCEL;
+  tolerance = tol;
   motorControlTimerSetup();
 
   newPos = 0;
@@ -76,46 +76,46 @@ void setPosition(double input) {
   newPos = input;
 }
 
-double getPosition(){
+double getPosition() {
   return currentPos;
 }
 
 double getSetPos() {
-    return newPos;
+  return newPos;
 }
 
 void setOrigin() {
   currentPos = 0;                       // use this to set the origin
 }
 
-void disableMotor(bool state){
+void disableMotor(bool state) {
   // use this to stop the motor
-    killMotor = state;
-    if (state) {
-        isRunning = false;
-        TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKDIS;
-    }
-    else {
-        isRunning = true;
-        TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;
-    }
-  
+  killMotor = state;
+  if (state) {
+    isRunning = false;
+    TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKDIS;
+  }
+  else {
+    isRunning = true;
+    TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;
+  }
+
 }
 
 bool isRun() {
-    return isRunning;
+  return isRunning;
 }
 
-void changeGain(double input, int index){
-	gainM[index] = input;
+void changeGain(double input, int index) {
+  gainM[index] = input;
 }
 
-void changeSpeed(double speedratio){
-	double currentTopSpeed = 50000 / MAXSPEED;	// convert speed to Hz
-	double currentBotSpeed = 50000 / MINSPEED;
-	
-	double newMaxSpeed = speedratio * (currentTopSpeed - currentBotSpeed) + currentBotSpeed;
-	MAXSPEED = 50000 / newMaxSpeed; // convert back to ArDuiNO sPEak
+void changeSpeed(double speedratio) {
+  double currentTopSpeed = 50000 / MAXSPEED;	// convert speed to Hz
+  double currentBotSpeed = 50000 / MINSPEED;
+
+  double newMaxSpeed = speedratio * (currentTopSpeed - currentBotSpeed) + currentBotSpeed;
+  MAXSPEED = 50000 / newMaxSpeed; // convert back to ArDuiNO sPEak
 }
 void motorControl (double input) {
   // do entire control loop in here
@@ -144,37 +144,37 @@ void motorControl (double input) {
   speedRatio = y / MAXSPEED;
 
   // set new speed
-  REG_PWM_CPRDUPD1 = MINSPEED - (MINSPEED-MAXSPEED)*abs(speedRatio);
-  REG_PWM_CDTYUPD1 = (MINSPEED -(MINSPEED-MAXSPEED)*abs(speedRatio))/50;
+  REG_PWM_CPRDUPD1 = MINSPEED - (MINSPEED - MAXSPEED) * abs(speedRatio);
+  REG_PWM_CDTYUPD1 = (MINSPEED - (MINSPEED - MAXSPEED) * abs(speedRatio)) / 10;
 }
 /*
-void motorControlStep (uint32_t spd, uint32_t acel, uint8_t dire) {
+  void motorControlStep (uint32_t spd, uint32_t acel, uint8_t dire) {
   // calculate speed and set PWM
   // set driver outputs
-}
+  }
 */
-void posCheck(double input){
-   
-          
-    if (abs(input - currentPos) < tolerance) {
+void posCheck(double input) {
 
-            digitalWrite(EN, LOW);    // disable output
-            isRunning = false;
-            
+
+  if (abs(input - currentPos) < tolerance) {
+
+    digitalWrite(EN, LOW);    // disable output
+    isRunning = false;
+
+  }
+  else {
+    if (killMotor) {
+      digitalWrite(EN, LOW);    // disable output
+      isRunning = false;
+
     }
     else {
-        if (killMotor) {
-            digitalWrite(EN, LOW);    // disable output
-            isRunning = false;
-            
-        }
-        else {
-            digitalWrite(EN, HIGH);
-            isRunning = true;
-            
-        }
+      digitalWrite(EN, HIGH);
+      isRunning = true;
+
     }
-   
+  }
+
 }
 
 void motorControlEncoder () {
@@ -267,15 +267,15 @@ void motorControlTimerSetup () {
   //------------------------------------------------------------------
 
   //PB17 or pin A9
-  PIOB->PIO_PDR |= 1<<17;    // disable pio and enable periferals
-  PIOB->PIO_ABSR |= 1<<17;   // set pin B17 to perf B which is PWML1
-  
+  PIOB->PIO_PDR |= 1 << 17;  // disable pio and enable periferals
+  PIOB->PIO_ABSR |= 1 << 17; // set pin B17 to perf B which is PWML1
+
   PMC->PMC_PCER1 |= PMC_PCER1_PID36;    // turn on PWM controller
 
   REG_PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(84);   // set PWM clock to 1MHz
   REG_PWM_CMR1 = PWM_CMR_CALG | PWM_CMR_CPRE_CLKA;      // set controller to use clock A
   REG_PWM_CPRD1 = MAXSPEED;     // set speed to 20kHz
-  REG_PWM_CDTY1 = MAXSPEED/2;   // set 50% dutycycle
+  REG_PWM_CDTY1 = MAXSPEED / 2; // set 50% dutycycle
   REG_PWM_ENA = PWM_ENA_CHID1;       // enable PWM Channel 1
 
 }
@@ -288,12 +288,12 @@ void TC8_Handler() {
   // get current speed
   motorControl(newPos);
   currentSpeed = gainM[2] * (MAXSPEED * speedRatio);
-  
+
 }
 
 
 /* test functions
-void printer() {
+  void printer() {
   if (currentPos != lastPos) {
     Serial.println(currentPos);
     //Serial.print("  |  ");
@@ -304,5 +304,5 @@ void printer() {
     //Serial.println(100 * speedRatio);
   }
   lastPos = currentPos;
-}
+  }
 */

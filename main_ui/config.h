@@ -1,12 +1,4 @@
 /*
-   -------------------------------------------------------------------------------------
-   HX711_ADC
-   Arduino library for HX711 24-Bit Analog-to-Digital Converter for Weight Scales
-   Olav Kallhovd sept2017
-   -------------------------------------------------------------------------------------
-*/
-
-/*
 HX711_ADC configuration
 
 Allowed values for "SAMPLES" is 1, 2, 4, 8, 16, 32, 64 or 128.

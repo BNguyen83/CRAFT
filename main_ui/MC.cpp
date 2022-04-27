@@ -12,12 +12,14 @@ void runMotor(double newPosition){
 	while(isRun() && motorFlag){
 		// do nothing else while motor runs
 		// if stop motor is false or isRun() returns false then this loop breaks
-    //Serial.println("still going");
-    if(digitalRead(34)) motorFlag = false;
-    if(digitalRead(35)) motorFlag = false;
+    //Serial.println(isRun());
+    //Serial.println(digitalRead(34));
+    //Serial.println(getPosition());
+    //if(digitalRead(34)) motorFlag = false;
+    //if(digitalRead(35)) motorFlag = false;
 	}
 	disableMotor(true);				// Disable motor
-  Serial.println("stopped");
+  //Serial.println("stopped");
 }
 
 double jogMotor(double offsetPos){
