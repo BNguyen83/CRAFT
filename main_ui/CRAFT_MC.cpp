@@ -92,10 +92,12 @@ void disableMotor(bool state) {
   // use this to stop the motor
   killMotor = state;
   if (state) {
+    posCheck(newPos);
     isRunning = false;
     TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKDIS;
   }
   else {
+    posCheck(newPos);
     isRunning = true;
     TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;
   }
@@ -120,6 +122,7 @@ void changeSpeed(double speedratio) {
 void motorControl (double input) {
   // do entire control loop in here
   posCheck(input);
+  newPos = input;
   // input in mm minus current pos in mm
   e1 = gainM[0] * (input - currentPos);
   e2 = e1 - (gainM[1] * currentSpeed);

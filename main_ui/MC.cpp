@@ -7,6 +7,7 @@ bool motorFlag = true;
 
 void runMotor(double newPosition){
 	setPosition(newPosition);		// set new position
+ /*
  //Serial.println(motorFlag);
 	disableMotor(false);			// Enable motor
 	while(isRun() && motorFlag){
@@ -20,11 +21,15 @@ void runMotor(double newPosition){
 	}
 	disableMotor(true);				// Disable motor
   //Serial.println("stopped");
+  */
 }
 
 double jogMotor(double offsetPos){
 	double currentPosition = getPosition() + offsetPos; // store the current position and add offset
-	runMotor(currentPosition); // move to the offset position
+	setPosition(currentPosition); // move to the offset position
+  disableMotor(false);
+  while(isRun());
+  disableMotor(true);
 	return getPosition();
 }
 

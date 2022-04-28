@@ -76,6 +76,8 @@ int mainState = 0; //Main
 int menuState = 0; // Menu
 int testState = 0; // Test
 int printFlag = 0; // Keypad
+int motorState = 0; // motor
+
 
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int i = 0;
@@ -281,7 +283,7 @@ void loop()
               trvDistance = 30;
             }
             Serial.println(trvDistance);
-            runMotor(trvDistance * -1); // move to new open position
+            jogMotor(trvDistance * -1); // move to new open position
             menuState++;
             i = 0;
             printFlag = 0;
@@ -508,20 +510,24 @@ void loop()
             bot.setCursor(16, 0);
             bot.print(cycleCounter);
           }
+          testState = 1;
+          break;
+          
           //---------------------------------------------------------------------------
           // cycle procedure
-
+        case 1: // insertion
           runMotor(0);    // move to closed position
-
+          mainState = 5;
+          break;
+        case 2:
           measureRMES(res, 20); // run resistance measurment
-
-          printToSD();        // print stuff to SD card
-
           delay(dwellTime * 1000);
-
           runMotor(trvDistance * -1);
-
+          mainState = 5;
+          break;
+        case 3:
           cycleCounter++;
+          printToSD();        // print stuff to SD card
 
           //------------------------------------------------------------------------
           if (cycleCounter >= cycleCount+1) {
@@ -530,13 +536,15 @@ void loop()
             printFlag = 0;
             myFile.close();
           }
+          testState = 0;
           break;
-
+        /*
         case 1: // User/System pause
           break;
 
         case 2: // Emergency pause
           break;
+          */
       } break; // This } is for 'switch(testState)'
 
     /******** Test Cycle ********/
@@ -589,6 +597,21 @@ void loop()
     default:
       setup();
       break;
+
+      case 5:
+      switch (motorState){
+        case 0: disableMotor(false); motorState = 1; break;   // enableMotor
+        case 1: // put the stuff you want to do here
+        if(isRun()) motorState = 2;
+        
+        break;
+        case 2: disableMotor(true); testState++; motorState = 0; mainState = 1; break;
+      }
+        
+
+        
+
+        
   } // This } is for 'switch(mainState)'
 }
 
