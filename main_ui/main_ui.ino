@@ -513,17 +513,17 @@ void loop()
           }
           testState = 1;
           break;
-          
-          //---------------------------------------------------------------------------
-          // cycle procedure
+
+        //---------------------------------------------------------------------------
+        // cycle procedure
         case 1: // insertion
-          runMotor(0);    // move to closed position
+          setPosition(0);    // move to closed position
           mainState = 5;
           break;
         case 2:
           measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
-          runMotor(trvDistance * -1);
+          setPosition(trvDistance * -1);
           mainState = 5;
           break;
         case 3:
@@ -531,7 +531,7 @@ void loop()
           printToSD();        // print stuff to SD card
 
           //------------------------------------------------------------------------
-          if (cycleCounter >= cycleCount+1) {
+          if (cycleCounter >= cycleCount + 1) {
             mainState = 0;
             menuState = 0;
             printFlag = 0;
@@ -539,12 +539,12 @@ void loop()
           }
           testState = 0;
           break;
-        /*
-        case 1: // User/System pause
-          break;
+          /*
+            case 1: // User/System pause
+            break;
 
-        case 2: // Emergency pause
-          break;
+            case 2: // Emergency pause
+            break;
           */
       } break; // This } is for 'switch(testState)'
 
@@ -599,20 +599,20 @@ void loop()
       setup();
       break;
 
-      case 5:
-      switch (motorState){
+    case 5:
+      switch (motorState) {
         case 0: disableMotor(false); motorState = 1; break;   // enableMotor
         case 1: // put the stuff you want to do here
-        if(isRun()) motorState = 2;
-        
-        break;
+          if (isRun() != 1) motorState = 2;
+
+          break;
         case 2: disableMotor(true); testState++; motorState = 0; mainState = 1; break;
       }
-        
 
-        
 
-        
+
+
+
   } // This } is for 'switch(mainState)'
 }
 
