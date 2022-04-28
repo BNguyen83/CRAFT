@@ -9,8 +9,6 @@
 #include "force.h" // Belinda's header
 #include "HX711ADC.h"
 
-// :)
-
 File myFile;
 
 uint8_t REED_PIN = 2; // Pin connected to reed switch
