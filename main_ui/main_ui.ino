@@ -7,6 +7,7 @@
 #include "MC.h"
 //#include "INT_HANDLER.h"
 #include "force.h" // Belinda's header
+#include "HX711ADC.h"
 
 // :)
 
@@ -88,7 +89,7 @@ void setup()
   bot.begin(40, 2);
 
   RMESini(20);
-  setupMC(10000, 4000, 0.8, 0.02);
+  setupMC(12000, 4000, 0.5, 0.02);
   forceSetup();
   Serial.begin(9600);
 
