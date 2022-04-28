@@ -108,6 +108,7 @@ void loop()
   {
     /********* Main menu *********/
     case 0:
+      disableMotor(true);
       switch (menuState) // Sub-state
       {
         case 0: // check SD card
