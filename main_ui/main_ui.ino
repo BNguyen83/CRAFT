@@ -69,7 +69,7 @@ float maxInSpeed;  // Insertion speed
 float dwellTime;
 
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
-int   cycleCounter = 1;
+int   cycleCounter = 0;
 
 int maxforce = 0;
 
@@ -89,7 +89,7 @@ void setup()
   bot.begin(40, 2);
 
   RMESini(20);
-  setupMC(12000, 4000, 0.5, 0.02);
+  setupMC(16000, 4000, 0.5, 0.02);
   forceSetup();
   Serial.begin(9600);
 
@@ -486,6 +486,7 @@ void loop()
           if (key == '#') {
             mainState = 1;
             printFlag = 0;
+            cycleCounter = 1;
           } else if (key == '*') {
             menuState--;
             printFlag = 0;
@@ -508,10 +509,10 @@ void loop()
             bot.print("Current cycle: ");
             bot.setCursor(16, 0);
             bot.print(cycleCounter);
-            //printFlag = 1;
           }
           //---------------------------------------------------------------------------
           // cycle procedure
+
           runMotor(0);    // move to closed position
 
           measureRMES(res, 20); // run resistance measurment
@@ -525,7 +526,7 @@ void loop()
           cycleCounter++;
 
           //------------------------------------------------------------------------
-          if (cycleCounter >= cycleCount) {
+          if (cycleCounter >= cycleCount+1) {
             mainState = 0;
             menuState = 0;
             printFlag = 0;
