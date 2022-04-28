@@ -55,7 +55,6 @@ byte colPins[COLS] = {K3, K4, K5, K6};
 
 Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
-
 /*** Test Parameters ***/
 int   cycleCount;
 float trvSpeed;    // Travel speed
@@ -69,7 +68,8 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
 
-int maxforce = 0;
+int maxForce = 0;
+int minForce = 0;
 
 /*** State machine flags ***/
 int mainState = 0; //Main
@@ -502,14 +502,24 @@ void loop()
           if (printFlag == 0) {
             top.clear();
             bot.clear();
+            // Top half LCD
             top.setCursor(1, 0);
             top.print("Total cycles: ");
             top.setCursor(15, 0);
             top.print(cycleCount);
-            bot.setCursor(1, 0);
-            bot.print("Current cycle: ");
-            bot.setCursor(16, 0);
-            bot.print(cycleCounter);
+            top.setCursor(1, 1);
+            top.print("Current cycle: ");
+            top.setCursor(16, 1);
+            top.print(cycleCounter);
+            // Bot half LCD
+            bot.setCursor(1,0);
+            bot.print("Insertion Force (g): ");
+            bot.setCursor(22,0);
+            bot.println(maxForce);
+            bot.setCursor(1,1);
+            bot.print("Removal Force (g): ");
+            bot.setCursor(20,1);
+            bot.println(minForce);
           }
           testState = 1;
           break;
@@ -603,6 +613,13 @@ void loop()
       switch (motorState) {
         case 0: disableMotor(false); motorState = 1; break;   // enableMotor
         case 1: // put the stuff you want to do here
+<<<<<<< Updated upstream
+=======
+          switch (testState){
+            case 1: measureInsertion(&maxForce);
+            case 2: measureRemoval(&minForce);
+          }
+>>>>>>> Stashed changes
           if (isRun() != 1) motorState = 2;
 
           break;

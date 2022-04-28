@@ -3,15 +3,16 @@
 #include "force.h"
 #include "config.h"
 
+// volatile boolean newDataReady; ---- uncomment this when using interrupt
 float calibrationValue = 88.47; // set the calibration value in the sketch
-unsigned long t = 0;
-const int HX711_dout = 2; //mcu > HX711 dout pin
-const int HX711_sck = 3; //mcu > HX711 sck pin
-boolean firstPeak = 0;
+const int HX711_dout = 30; //mcu > HX711 dout pin
+const int HX711_sck = 31; //mcu > HX711 sck pin
+
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
 
-// volatile boolean newDataReady; ---- uncomment this when using interrupt
 int overload = 10000;
+boolean firstPeak = 0;
+unsigned long t = 0;
 
 void forceSetup() {
   Serial.begin(57600);
@@ -34,7 +35,7 @@ void forceSetup() {
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
-  if (firstPeak != 0) {
+  if (firstPeak == 0) {
     if (LoadCell.update()) newDataReady = 1;
     // get smoothed value from the dataset:
     if (newDataReady) {
@@ -45,8 +46,8 @@ void measureInsertion(int* maxForce) {
           newDataReady = 0;
           t = millis();
         }
-        else if (i < *maxForce || *maxForce > overload) {
-          firstPeak = 0;
+        else if (*maxForce - i > 0) {
+          firstPeak = 1;
         }
       }
     }
