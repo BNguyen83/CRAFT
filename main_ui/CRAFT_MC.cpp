@@ -95,8 +95,12 @@ void disableMotor(bool state) {
     posCheck(newPos);
     isRunning = false;
     TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKDIS;
+    y = 0;
+    integ1[0] = 0;
+    integ1[1] = 0;
   }
   else {
+    
     posCheck(newPos);
     isRunning = true;
     TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;

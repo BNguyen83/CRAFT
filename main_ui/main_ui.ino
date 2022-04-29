@@ -5,7 +5,7 @@
 #include "RMES.h" // Mark's header
 #include "CRAFT_MC.h" // Andrew's header
 #include "MC.h"
-//#include "INT_HANDLER.h"
+#include "INT_HANDLER.h"
 #include "force.h" // Belinda's header
 #include "HX711ADC.h"
 
@@ -82,7 +82,10 @@ int pauseState = 0; // pause
 
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int i = 0;
+int intFlag = 0;
+int holdMainState = 0;
 
+/****** SETUP ******/
 void setup()
 {
   // Initialize top and bottom LCD
@@ -92,6 +95,9 @@ void setup()
   RMESini(20);
   setupMC(12000, 4000, 0.5, 0.02);
   forceSetup();
+  setupInterrupts();
+  //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
+
   Serial.begin(9600);
 
   /* Other function initializations go here */
@@ -100,6 +106,9 @@ void setup()
 void loop()
 {
   char key = myKeypad.getKey();
+
+  // "interupts" Handler
+  interruptHand();
   /*
     insertionForce(&maxforce);
     Serial.print("Insertion Force (kg): ");
@@ -170,6 +179,7 @@ void loop()
             bot.print("<A> Begin test  <B> Test Cycle ");
             bot.setCursor(1, 1);
             bot.print("<C> Set Origin  <D> Set Force");
+
           }
           printFlag = 1;
           if (key == 'A') {
@@ -242,7 +252,7 @@ void loop()
             bot.print(key);
             i++;
 
-            
+
           }
 
           if (key == '#') {
@@ -515,23 +525,23 @@ void loop()
             top.print("Current cycle: ");
             top.setCursor(16, 1);
             top.print(cycleCounter);
-            
+
             // Bot half LCD
-            bot.setCursor(1,0);
+            bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
-            bot.setCursor(17,0);
+            bot.setCursor(17, 0);
             bot.print((int)maxForce);
             Serial.println((int)maxForce);
-            bot.setCursor(1,1);
+            bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
-            bot.setCursor(17,1);
+            bot.setCursor(17, 1);
             bot.print((int)minForce);
             Serial.println((int)minForce);
-            bot.setCursor(30,1);
+            bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
           testState = 1;
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
@@ -545,24 +555,24 @@ void loop()
           resetForceFlag();
           setPosition(0);    // move to closed position
           mainState = 5;
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }          
+          }
           break;
         case 2:
           measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
           setPosition(trvDistance * -1);
           mainState = 5;
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }          
+          }
           break;
         case 3:
           cycleCounter++;
@@ -576,12 +586,12 @@ void loop()
             myFile.close();
           }
           testState = 0;
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }          
+          }
           break;
           /*
             case 1: // User/System pause
@@ -598,7 +608,7 @@ void loop()
 
     /********* Set origin *********/
     case 3:
-    changeTopSpeed(0.5);
+      changeTopSpeed(0.5);
       if (printFlag == 0) {
         top.clear();
         bot.clear();
@@ -635,82 +645,83 @@ void loop()
         printFlag = 0;
         setOrigin();
       }
-      changeTopSpeed(1);
+      Serial.println(changeTopSpeed(1));
       break;
 
-    /******** Set Force ********/
+    /******** More Options ********/
     //case 4:
     //break;
 
+    /******* Motor Loop ******/
     case 5:
       switch (motorState) {
-        case 0: disableMotor(false); motorState = 1; 
-          if (key == 'D'){
+        case 0: disableMotor(false); motorState = 1;
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }        
-        break;   // enableMotor
+          }
+          break;   // enableMotor
         case 1: // put the stuff you want to do here
-          switch (testState){
+          switch (testState) {
             case 1: measureInsertion(&maxForce);
             case 2: measureRemoval(&minForce);
           }
           if (isRun() != 1) motorState = 2;
 
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }          
+          }
           break;
         case 2: disableMotor(true); testState++; motorState = 0; mainState = 1;
-          if (key == 'D'){
+          if (key == 'D') {
             mainState = 6;
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-          }        
-        break;
+          }
+          break;
       }
       break;
     /******* pause ******/
     case 6:
-      switch(pauseState){
+      switch (pauseState) {
         case 0: // Pause menu
-          if (printFlag == 0){
+          if (printFlag == 0) {
             top.clear();
             bot.clear();
-            top.setCursor(1,0);
+            top.setCursor(1, 0);
             top.print("Test is paused...");
-            bot.setCursor(31,1);
+            bot.setCursor(31, 1);
             bot.print("<*> Back");
-            top.setCursor(1,1);
+            top.setCursor(1, 1);
             top.print("<A> Stop test");
-            bot.setCursor(1,0);
+            bot.setCursor(1, 0);
             bot.print("<B> Open connector");
-            bot.setCursor(1,1);
+            bot.setCursor(1, 1);
             bot.print("<C> Jog motor");
             printFlag = 1;
           }
 
-          if (key == '*'){
+          if (key == '*') {
             mainState = 1;
             printFlag = 0;
-          } else if (key == 'A'){
+          } else if (key == 'A') { // go to end screen
             //mainState = 7;
             printFlag = 0;
-          } else if (key == 'B'){
+          } else if (key == 'B') { // move to open position
 
-          } else if (key == 'C'){
+          } else if (key == 'C') { // go to jog motor
             pauseState = 1;
             printFlag = 0;
           }
           break;
         case 1: // Jog motor in pause state
-          changeTopSpeed(0.5);
+          //changeTopSpeed(0.5);
           if (printFlag == 0) {
             top.clear();
             bot.clear();
@@ -746,28 +757,88 @@ void loop()
             pauseState = 0;
             printFlag = 0;
           }
-          changeTopSpeed(1);
+          Serial.println(changeTopSpeed(1));
           break;
       } // This } is for 'pauseState'
-      
-      
+
+
     /******* Test end *******/
     case 7:
-      if (printFlag == 0){
-        
-      }
-      printFlag = 1;
-      
+
+
       break;
     default:
       setup();
       break;
+
+    /******* ERROR SCREEN *******/
+    case 8:
+      switch (intFlag) {
+        case 0:
+          mainState = holdMainState;
+          printFlag = 0;
+          disableMotor(false);
+          //delay(2000);
+
+          break;
+        case 1:
+          disableMotor(true);
+          if (printFlag == 0) {
+            if (printFlag == 0) {
+              top.clear();
+              bot.clear();
+              top.setCursor(2, 1);
+              top.print("****** EMERGENCY STOP ENGAGED ******");
+              printFlag = 1;
+            }
+          }
+          printFlag = 1;
+          break;
+        case 2:
+          disableMotor(true);
+          if (printFlag == 0) {
+            if (printFlag == 0) {
+              top.clear();
+              bot.clear();
+              top.setCursor(2, 1);
+              top.print("****** OBSTRUCTION DETECTED ******");
+              printFlag = 1;
+            }
+          }
+          break;
+        case 3:
+          disableMotor(true);
+          if (printFlag == 0) {
+            if (printFlag == 0) {
+              top.clear();
+              bot.clear();
+              top.setCursor(2, 1);
+              top.print("****** dOoR OpEn ******");
+              printFlag = 1;
+            }
+          }
+          intFlag = 10;
+          delay(2000);
+          mainState = 0;
+          printFlag = 0;
+          break;
+
+        case 10:
+
+          break;
+
+        default:
+          break;
+      }
+      break;
   } // This } is for 'switch(mainState)'
+  resetIntFlag();
 }
 
 // this function will not work
-void enclosureReading()
-{
+/*
+  void enclosureReading()
+  {
   pinMode(REED_PIN, INPUT_PULLUP); //pull-up the reed switch pin internally.
   int proximity = digitalRead(REED_PIN); // Read the state of the switch
   if (proximity == HIGH) // If the pin reads low, the switch is closed.
@@ -778,8 +849,8 @@ void enclosureReading()
   }
 
 
-}
-
+  }
+*/
 void printToSD() {
   for (int g = 0; g < 20; g++) {
     // print resistance values
@@ -789,6 +860,95 @@ void printToSD() {
   myFile.println();
 }
 
-void convertSpeed(float input){
+void convertSpeed(float input) {
   changeTopSpeed(map(input, 5.08, 15.24, 0, 1));
+}
+
+void interruptHand() {
+  // E-stop
+  if (digitalRead(34)) {
+    // send to error screen
+    intFlag = 1;
+    if (mainState != 8) {
+      holdMainState = mainState;  // store current state
+      printFlag = 0;
+    }
+    mainState = 8;              // move to error screen
+
+
+  }
+  // Obstruction Detection
+
+  if (digitalRead(35)) {
+    // send to error screen
+    intFlag = 2;
+    if (mainState != 8) {
+      holdMainState = mainState;  // store current state
+      printFlag = 0;
+    }
+    mainState = 8;              // move to error screen
+
+
+  }
+  // door swithc
+
+  if (digitalRead(A9) != 0) {
+    // send to error screen
+    if (intFlag != 10) {
+      intFlag = 3;
+      if (mainState != 8) {
+        holdMainState = mainState;  // store current state
+        printFlag = 0;
+        mainState = 8;              // move to error screen
+      }
+    }
+    //else intFlag = 10;
+
+
+
+
+  }/*
+  Serial.print(mainState);
+  Serial.print(" ");
+  Serial.print(holdMainState);
+  Serial.print(" ");
+  Serial.println(intFlag);
+  */
+
+}
+
+
+
+void doorSwitch() {
+
+  disableMotor(true);
+
+  if (printFlag == 0) {
+    top.clear();
+    bot.clear();
+    top.setCursor(2, 1);
+    top.print("****** Door open ******");
+    printFlag = 1;
+  }/*
+  Serial.print(mainState);
+  Serial.print(" ");
+  Serial.print(digitalRead(A9));
+  Serial.print(" ");
+  Serial.println(intFlag);
+  */
+  delay(2000);
+
+
+}
+
+void resetIntFlag() {
+  if (digitalRead(34) == 0) {
+    switch (intFlag) {
+      case (1): intFlag = 0; break;
+      case (2): break;
+      //case (3): intFlag = 10; break;
+      default: break;
+    }
+    if (digitalRead(A9) == 0) intFlag = 0;
+  }
 }

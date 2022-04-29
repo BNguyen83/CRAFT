@@ -42,7 +42,8 @@ void setupInterrupts(){
   Serial.begin(9600);
   pinMode(ESTOP_, INPUT);
   pinMode(FAILSAFE_, INPUT);
-  attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, RISING);
-  attachInterrupt(digitalPinToInterrupt(FAILSAFE_), failsafe, RISING);
+  pinMode(A9, INPUT_PULLUP);
+  //attachInterrupt(digitalPinToInterrupt(ESTOP_), eStop, RISING);
+  //attachInterrupt(digitalPinToInterrupt(FAILSAFE_), failsafe, RISING);
   delay(1000);
 }
