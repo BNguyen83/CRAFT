@@ -47,7 +47,7 @@ const byte ROWS = 4; // four rows
 const byte COLS = 4; // four columns
 
 // Key definitions
-char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', '.'} };
+char hexaKeys[ROWS][COLS] = { {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', 'D'} };
 
 // Arduino digital pin connection
 byte rowPins[ROWS] = {K1, K2, K8, K7};
@@ -72,11 +72,12 @@ int maxForce = 0;
 int minForce = 0;
 
 /*** State machine flags ***/
-int mainState = 0; //Main
-int menuState = 0; // Menu
-int testState = 0; // Test
-int printFlag = 0; // Keypad
+int mainState  = 0; //Main
+int menuState  = 0; // Menu
+int testState  = 0; // Test
+int printFlag  = 0; // Keypad
 int motorState = 0; // motor
+int pauseState = 0; // pause
 
 
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -240,12 +241,15 @@ void loop()
             arr[i] = key;
             bot.print(key);
             i++;
+
+            
           }
 
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
             trvSpeed = ms.toFloat();
+            convertSpeed(trvSpeed);
             Serial.println(trvSpeed);
             menuState++;
             i = 0;
@@ -504,37 +508,61 @@ void loop()
             bot.clear();
             // Top half LCD
             top.setCursor(1, 0);
-            top.print("Total cycles: ");
-            top.setCursor(15, 0);
+            top.print("Total cycles:  ");
+            top.setCursor(16, 0);
             top.print(cycleCount);
             top.setCursor(1, 1);
             top.print("Current cycle: ");
             top.setCursor(16, 1);
             top.print(cycleCounter);
+            
             // Bot half LCD
             bot.setCursor(1,0);
-            bot.print("Insertion Force (g): ");
-            bot.setCursor(22,0);
-            bot.println(maxForce);
+            bot.print("Ins. Force (g): ");
+            bot.setCursor(17,0);
+            bot.print((int)maxForce);
+            Serial.println((int)maxForce);
             bot.setCursor(1,1);
-            bot.print("Removal Force (g): ");
-            bot.setCursor(20,1);
-            bot.println(minForce);
+            bot.print("Rem. Force (g): ");
+            bot.setCursor(17,1);
+            bot.print((int)minForce);
+            Serial.println((int)minForce);
+            bot.setCursor(30,1);
+            bot.print("<D> Pause");
           }
           testState = 1;
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }
           break;
 
         //---------------------------------------------------------------------------
         // cycle procedure
         case 1: // insertion
+          resetForceFlag();
           setPosition(0);    // move to closed position
           mainState = 5;
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }          
           break;
         case 2:
           measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
           setPosition(trvDistance * -1);
           mainState = 5;
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }          
           break;
         case 3:
           cycleCounter++;
@@ -548,6 +576,12 @@ void loop()
             myFile.close();
           }
           testState = 0;
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }          
           break;
           /*
             case 1: // User/System pause
@@ -564,6 +598,7 @@ void loop()
 
     /********* Set origin *********/
     case 3:
+    changeTopSpeed(0.5);
       if (printFlag == 0) {
         top.clear();
         bot.clear();
@@ -600,36 +635,133 @@ void loop()
         printFlag = 0;
         setOrigin();
       }
+      changeTopSpeed(1);
       break;
 
     /******** Set Force ********/
     //case 4:
     //break;
-    default:
-      setup();
-      break;
 
     case 5:
       switch (motorState) {
-        case 0: disableMotor(false); motorState = 1; break;   // enableMotor
+        case 0: disableMotor(false); motorState = 1; 
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }        
+        break;   // enableMotor
         case 1: // put the stuff you want to do here
-<<<<<<< Updated upstream
-=======
           switch (testState){
             case 1: measureInsertion(&maxForce);
             case 2: measureRemoval(&minForce);
           }
->>>>>>> Stashed changes
           if (isRun() != 1) motorState = 2;
 
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }          
           break;
-        case 2: disableMotor(true); testState++; motorState = 0; mainState = 1; break;
+        case 2: disableMotor(true); testState++; motorState = 0; mainState = 1;
+          if (key == 'D'){
+            mainState = 6;
+            pauseState = 0;
+            printFlag = 0;
+            disableMotor(true);
+          }        
+        break;
       }
+      break;
+    /******* pause ******/
+    case 6:
+      switch(pauseState){
+        case 0: // Pause menu
+          if (printFlag == 0){
+            top.clear();
+            bot.clear();
+            top.setCursor(1,0);
+            top.print("Test is paused...");
+            bot.setCursor(31,1);
+            bot.print("<*> Back");
+            top.setCursor(1,1);
+            top.print("<A> Stop test");
+            bot.setCursor(1,0);
+            bot.print("<B> Open connector");
+            bot.setCursor(1,1);
+            bot.print("<C> Jog motor");
+            printFlag = 1;
+          }
 
+          if (key == '*'){
+            mainState = 1;
+            printFlag = 0;
+          } else if (key == 'A'){
+            //mainState = 7;
+            printFlag = 0;
+          } else if (key == 'B'){
 
-
-
-
+          } else if (key == 'C'){
+            pauseState = 1;
+            printFlag = 0;
+          }
+          break;
+        case 1: // Jog motor in pause state
+          changeTopSpeed(0.5);
+          if (printFlag == 0) {
+            top.clear();
+            bot.clear();
+            bot.setCursor(31, 1);
+            bot.print("<#> Back");
+            top.setCursor(1, 0);
+            top.print("Jog motor (mm)... ");
+            top.setCursor(1, 1);
+            top.print("<1>  5.0  <2>  1.0  <3>  0.5");
+            bot.setCursor(1, 0);
+            bot.print("<4> -0.5  <5> -1.0  <6> -5.0");
+            bot.setCursor(1, 1);
+            bot.print("<7>  0.1  <8> -0.1");
+            printFlag = 1;
+          }
+          if (key == '1') {
+            jogMotor(5.0);
+          } else if (key == '2') {
+            jogMotor(1.0);
+          } else if (key == '3') {
+            jogMotor(0.5);
+          } else if (key == '4') {
+            jogMotor(-0.5);
+          } else if (key == '5') {
+            jogMotor(-1.0);
+          } else if (key == '6') {
+            jogMotor(-5.0);
+          } else if (key == '7') {
+            jogMotor(0.1);
+          } else if (key == '8') {
+            jogMotor(-0.1);
+          } else if (key == '#') {
+            pauseState = 0;
+            printFlag = 0;
+          }
+          changeTopSpeed(1);
+          break;
+      } // This } is for 'pauseState'
+      
+      
+    /******* Test end *******/
+    case 7:
+      if (printFlag == 0){
+        
+      }
+      printFlag = 1;
+      
+      break;
+    default:
+      setup();
+      break;
   } // This } is for 'switch(mainState)'
 }
 
@@ -655,4 +787,8 @@ void printToSD() {
     myFile.print(" ");
   }
   myFile.println();
+}
+
+void convertSpeed(float input){
+  changeTopSpeed(map(input, 5.08, 15.24, 0, 1));
 }

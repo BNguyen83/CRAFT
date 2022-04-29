@@ -31,7 +31,7 @@ void forceSetup() {
 //    newDataReady = 1;
 //  }
 //}
-
+void resetForceFlag(){ firstPeak = 0;}
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
