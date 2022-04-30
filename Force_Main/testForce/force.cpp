@@ -16,7 +16,7 @@ unsigned long t = 0;
 int user = 400;
 
 void forceSetup() {
-  Serial.begin(57600);
+  Serial.begin(9600);
   delay(10);
 
   LoadCell.begin();
