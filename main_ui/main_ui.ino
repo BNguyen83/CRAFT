@@ -96,7 +96,7 @@ void setup()
   bot.begin(40, 2);
 
   RMESini(20);
-  setupMC(0.2, 0.02);
+  setupMC(0.1, 0.02);
   forceSetup();
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
@@ -179,7 +179,7 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("<A> Begin test  <B> Test Cycle ");
             bot.setCursor(1, 1);
-            bot.print("<C> Set Origin  <D> Set Force");
+            bot.print("<C> Set Origin  <D> System defaults");
 
           }
           printFlag = 1;
@@ -583,7 +583,7 @@ void loop()
           testEnd();
           //------------------------------------------------------------------------
           if (cycleCounter >= cycleCount + 1) {
-            mainState = 0;
+            mainState = 9;
             menuState = 0;
             printFlag = 0;
             myFile.close();
@@ -708,9 +708,7 @@ void loop()
             top.setCursor(1, 1);
             top.print("<A> Stop test");
             bot.setCursor(1, 0);
-            bot.print("<B> Open connector");
-            bot.setCursor(1, 1);
-            bot.print("<C> Jog motor");
+            bot.print("<B> Jog Motor");
             printFlag = 1;
           }
 
@@ -718,11 +716,10 @@ void loop()
             mainState = 1;
             printFlag = 0;
           } else if (key == 'A') { // go to end screen
-            //mainState = 7;
+            mainState = 0;
+            menuState = 0;
             printFlag = 0;
-          } else if (key == 'B') { // move to open position
-
-          } else if (key == 'C') { // go to jog motor
+          } else if (key == 'B') { // go to jog motor
             pauseState = 1;
             printFlag = 0;
           }
@@ -829,36 +826,45 @@ void loop()
           mainState = 0;
           printFlag = 0;
           break;
-
-        case 9: //end of test
+      }
+        
+      case 9: //end of test
               if (printFlag == 0) {
                 switch(endFlag){
                 case 1:
                   top.clear();
                   bot.clear();
-                  top.setCursor(2, 1);
+                  bot.setCursor(31,1);
+                  bot.print("<#> Next");
+                  top.setCursor(1, 0);
                   top.print("Max insertion force reached, test ended.");
                   printFlag = 1;
                   break;
                 case 2:
                   top.clear();
                   bot.clear();
-                  top.setCursor(2, 1);
+                  bot.setCursor(31,1);
+                  bot.print("<#> Next");
+                  top.setCursor(1, 0);
                   top.print("Min removal force reached, test ended.");
                   printFlag = 1;
                   break;
                   case 3:
                   top.clear();
                   bot.clear();
-                  top.setCursor(2, 1);
+                  bot.setCursor(31,1);
+                  bot.print("<#> Next");
+                  top.setCursor(1, 0);
                   top.print("Max resistance reached, test ended.");
                   printFlag = 1;
                   break;
                   case 4:
                   top.clear();
                   bot.clear();
-                  top.setCursor(2, 1);
-                  top.print("Target cycke count reached, test ended.");
+                  bot.setCursor(31,1);
+                  bot.print("<#> Next");
+                  top.setCursor(1, 0);
+                  top.print("Target cycle count reached, test ended.");
                   printFlag = 1;
                   break;
                 }
@@ -866,21 +872,34 @@ void loop()
             }
                   if (key == '#') {
                   mainState = 0;
+                  menuState = 0;
                   printFlag = 0;
                }
                break;
 
-        case 10:
-
+        case 10: // end screen
+          if (printFlag == 0){
+            top.clear();
+            bot.clear();
+            top.setCursor(1,0);
+            top.print("Test is now complete!");
+            top.setCursor(1,1);
+            top.print("Cycles completed: ");
+            top.setCursor(19,1);
+            top.print(cycleCounter);
+            bot.setCursor(1,0);
+            bot.print("End condition: ");
+             
+          }
           break;
 
-        default:
-          break;
-      }
-      break;
-  } // This } is for 'switch(mainState)'
+        //default:
+      
+      //break;
+      
+    } // This } is for 'switch(mainState)'
   resetIntFlag();
-}
+  }
 
 // this function will not work
 /*
@@ -910,7 +929,7 @@ void printToSD() {
 }
 
 void convertSpeed(float input) {
-  changeTopSpeed(map(input, 5.08, 15.24, 0, 1));
+  changeTopSpeed(map(input, 5.08, 25.4, 0, 1));
 }
 
 void interruptHand() {

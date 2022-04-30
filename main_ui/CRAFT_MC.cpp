@@ -15,7 +15,7 @@
 #define ENC_RI 38                       // Encoder pin RI
 
 
-double MAX_ = 16000;
+double MAX_ = 20000;
 double MIN_ = 4000;
 
 
@@ -272,7 +272,7 @@ void motorControlTimerSetup () {
   // set the base clock to MCK/8
   TC2->TC_CHANNEL[2].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK2 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
 
-  TC2->TC_CHANNEL[2].TC_RC = 10500; //525;   // set timer to 20kHz or 1kHz
+  TC2->TC_CHANNEL[2].TC_RC = 5250; //10500; //525;   // set timer to 20kHz or 1kHz
   TC2->TC_CHANNEL[2].TC_IER = TC_IER_CPCS; // setup interrupt
   NVIC_EnableIRQ(TC8_IRQn);         // software trigger
   TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN; // Enable timer
