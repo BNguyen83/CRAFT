@@ -2,8 +2,8 @@
 #include "HX711ADC.h"
 #include "forceCalibration.h"
 
-const int HX711_dout = 31; //mcu > HX711 dout pin
-const int HX711_sck = 30; //mcu > HX711 sck pin
+const int HX711_dout = 30; //mcu > HX711 dout pin
+const int HX711_sck = 31; //mcu > HX711 sck pin
 
 //HX711 constructor:
 

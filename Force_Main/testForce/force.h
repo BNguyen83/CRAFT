@@ -2,6 +2,5 @@
 #define FORCE_h
 
 void forceSetup();
-void measureInsertion(int*, int*);
-void measureRemoval(int*);
+void measureInsertion(int*);
 #endif

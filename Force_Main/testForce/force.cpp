@@ -5,14 +5,14 @@
 
 
 
-const int HX711_dout = 2; //mcu > HX711 dout pin
-const int HX711_sck = 3; //mcu > HX711 sck pin
-float calibrationValue = 88.47; // set the calibration value in the sketch
+const int HX711_dout = 30; //mcu > HX711 dout pin
+const int HX711_sck = 31; //mcu > HX711 sck pin
+float calibrationValue = 879; // set the calibration value in the sketch
 
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
 
 unsigned long t = 0;
-// volatile boolean newDataReady; ---- uncomment this when using interrupt 
+// volatile boolean newDataReady; ---- uncomment this when using interrupt
 int user = 400;
 
 void forceSetup() {
@@ -33,24 +33,19 @@ void forceSetup() {
 //  }
 //}
 
-void measureInsertion(int* maxForce, int* ignoredForce) {
+void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
   if (LoadCell.update()) newDataReady = 1;
-  
+
   // get smoothed value from the dataset:
   if (newDataReady) {
     if (millis() > t + settlingTime) {
       float i = LoadCell.getData();
-        if (i >= *maxForce ) {
-          *maxForce = i;
-        }
-        else if(i > *maxForce) {
-        LoadCell.powerDown();  
-        }
-       }
-      newDataReady = 0;
-      t = millis();
+      if (i >= *maxForce ) {
+        *maxForce = i;
+      }
+    }
   }
 }
 
@@ -59,19 +54,19 @@ void measureRemoval(int* minForce) {
   const int settlingTime = 0;
   int minUser = 10;
   if (LoadCell.update()) newDataReady = 1;
-  
+
   // get smoothed value from the dataset:
   if (newDataReady) {
     if (millis() > t + settlingTime) {
       float i = LoadCell.getData();
-       if (i > minUser){
+      if (i > minUser) {
         if (i > *minForce ) {
           *minForce = i;
         }
-       }
-      else if (i <= minUser && *minForce < minUser){
-      LoadCell.powerDown();
-      Serial.println("User Condition is met");
+      }
+      else if (i <= minUser && *minForce < minUser) {
+        LoadCell.powerDown();
+        Serial.println("User Condition is met");
       }
       newDataReady = 0;
       t = millis();
