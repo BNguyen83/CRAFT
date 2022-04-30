@@ -10,6 +10,8 @@
 #include "HX711ADC.h"
 
 File myFile;
+/***** System Defaults *****/
+
 
 uint8_t REED_PIN = 2; // Pin connected to reed switch
 
@@ -60,8 +62,8 @@ int   cycleCount;
 float trvSpeed;    // Travel speed
 float trvDistance; // Travel Distance
 int   maxRes;      // Max resistance
-float maxInForce;  // Insertion force
-float minRemForce; // Removal force
+float maxInForce_LIMIT;  // Insertion force
+float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
 float dwellTime;
 
@@ -78,6 +80,7 @@ int testState  = 0; // Test
 int printFlag  = 0; // Keypad
 int motorState = 0; // motor
 int pauseState = 0; // pause
+int endFlag = 0; //end condition
 
 
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -93,7 +96,7 @@ void setup()
   bot.begin(40, 2);
 
   RMESini(20);
-  setupMC(12000, 4000, 0.5, 0.02);
+  setupMC(0.2, 0.02);
   forceSetup();
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
@@ -109,6 +112,7 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
+  //if(endFlag != 0){mainState = 9;}
   /*
     insertionForce(&maxforce);
     Serial.print("Insertion Force (kg): ");
@@ -144,12 +148,9 @@ void loop()
               top.print("**ERROR**");
               bot.setCursor(1, 0);
               bot.print("SD card not detected");
-
-              if (key == '#') {
-                menuState = 0;
-                printFlag = 0;
-              }
-
+              menuState = 0;
+              printFlag = 0;
+              delay(2000);
             } else {
               top.clear();
               bot.clear();
@@ -369,8 +370,8 @@ void loop()
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            maxInForce = ms.toFloat();
-            Serial.println(maxInForce);
+            maxInForce_LIMIT = ms.toFloat();
+            Serial.println(maxInForce_LIMIT);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -404,8 +405,8 @@ void loop()
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            minRemForce = ms.toFloat();
-            Serial.println(minRemForce);
+            minRemForce_LIMIT = ms.toFloat();
+            Serial.println(minRemForce_LIMIT);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -530,13 +531,13 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
-            bot.print((int)maxForce);
-            Serial.println((int)maxForce);
+            bot.print(maxForce);
+            Serial.println(maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
-            bot.print((int)minForce);
-            Serial.println((int)minForce);
+            bot.print(minForce);
+            Serial.println(minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
@@ -560,6 +561,7 @@ void loop()
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
+            resetForceFlag();
           }
           break;
         case 2:
@@ -575,9 +577,10 @@ void loop()
           }
           break;
         case 3:
-          cycleCounter++;
+          
           printToSD();        // print stuff to SD card
-
+          cycleCounter++;
+          testEnd();
           //------------------------------------------------------------------------
           if (cycleCounter >= cycleCount + 1) {
             mainState = 0;
@@ -592,6 +595,8 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
+          minForce = 0;
+          maxForce = 0;
           break;
           /*
             case 1: // User/System pause
@@ -608,8 +613,9 @@ void loop()
 
     /********* Set origin *********/
     case 3:
-      changeTopSpeed(0.5);
+
       if (printFlag == 0) {
+              changeTopSpeed(0.5);
         top.clear();
         bot.clear();
         bot.setCursor(31, 1);
@@ -643,9 +649,10 @@ void loop()
       } else if (key == '#') {
         mainState = 0;
         printFlag = 0;
+        changeTopSpeed(.9);
         setOrigin();
       }
-      Serial.println(changeTopSpeed(1));
+
       break;
 
     /******** More Options ********/
@@ -665,8 +672,8 @@ void loop()
           break;   // enableMotor
         case 1: // put the stuff you want to do here
           switch (testState) {
-            case 1: measureInsertion(&maxForce);
-            case 2: measureRemoval(&minForce);
+            case 1: measureInsertion(&maxForce); //Serial.println(maxForce);break;
+            case 2: measureRemoval(&minForce);//Serial.println(minForce);break;
           }
           if (isRun() != 1) motorState = 2;
 
@@ -823,6 +830,46 @@ void loop()
           printFlag = 0;
           break;
 
+        case 9: //end of test
+              if (printFlag == 0) {
+                switch(endFlag){
+                case 1:
+                  top.clear();
+                  bot.clear();
+                  top.setCursor(2, 1);
+                  top.print("Max insertion force reached, test ended.");
+                  printFlag = 1;
+                  break;
+                case 2:
+                  top.clear();
+                  bot.clear();
+                  top.setCursor(2, 1);
+                  top.print("Min removal force reached, test ended.");
+                  printFlag = 1;
+                  break;
+                  case 3:
+                  top.clear();
+                  bot.clear();
+                  top.setCursor(2, 1);
+                  top.print("Max resistance reached, test ended.");
+                  printFlag = 1;
+                  break;
+                  case 4:
+                  top.clear();
+                  bot.clear();
+                  top.setCursor(2, 1);
+                  top.print("Target cycke count reached, test ended.");
+                  printFlag = 1;
+                  break;
+                }
+                  myFile.close();
+            }
+                  if (key == '#') {
+                  mainState = 0;
+                  printFlag = 0;
+               }
+               break;
+
         case 10:
 
           break;
@@ -852,6 +899,8 @@ void loop()
   }
 */
 void printToSD() {
+  myFile.print(cycleCounter);
+  myFile.print("|");
   for (int g = 0; g < 20; g++) {
     // print resistance values
     myFile.print(res[g]);
@@ -878,7 +927,7 @@ void interruptHand() {
 
   }
   // Obstruction Detection
-
+/*
   if (digitalRead(35)) {
     // send to error screen
     intFlag = 2;
@@ -889,7 +938,7 @@ void interruptHand() {
     mainState = 8;              // move to error screen
 
 
-  }
+  }*/
   // door swithc
 
   if (digitalRead(A9) != 0) {
@@ -952,3 +1001,12 @@ void resetIntFlag() {
     if (digitalRead(A9) == 0) intFlag = 0;
   }
 }
+
+void testEnd(){
+  if(maxForce > maxInForce_LIMIT){endFlag = 1;}
+  if(minForce < minRemForce_LIMIT){endFlag = 2;}
+  for(int rescount = 0; rescount < 20; rescount++){
+      if(res[rescount] > maxRes){endFlag = 3;}
+    }
+    if(cycleCounter > cycleCount){endFlag = 4;}
+  }

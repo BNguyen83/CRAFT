@@ -15,6 +15,10 @@
 #define ENC_RI 38                       // Encoder pin RI
 
 
+double MAX_ = 16000;
+double MIN_ = 4000;
+
+
 double MAXACCEL = 0.2;
 
 double MAXSPEED = 100;                 // arbitrary max speed value 50 is about as fast as it can go in no load
@@ -45,7 +49,7 @@ double y = 0;
 // Gain MATRIX 0: error1 |1: error2 |2: speed feedback
 double gainM[] = {45, 1, 1, 1, 1};
 
-void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
+void setupMC(double ACCEL, double tol) {
   // setup ISR register
   //pinMode(12, OUTPUT);
   //pinMode(STEP, OUTPUT);
@@ -61,14 +65,14 @@ void setupMC(double MAXS, double MINS, double ACCEL, double tol) {
   digitalWrite(EN, LOW);
   //Serial.begin(230400);
 
-  MAXSPEED = 500000 / MAXS;
-  MINSPEED = 500000 / MINS;
+  MAXSPEED = 500000 / MAX_;
+  MINSPEED = 500000 / MIN_;
   MAXACCEL = ACCEL;
   tolerance = tol;
   motorControlTimerSetup();
 
   newPos = 0;
-
+  //Serial.begin(9600);
 }
 
 void setPosition(double input) {
@@ -117,11 +121,12 @@ void changeGain(double input, int index) {
 }
 
 void changeSpeed(double speedratio) {
-  double currentTopSpeed = 50000 / MAXSPEED;	// convert speed to Hz
-  double currentBotSpeed = 50000 / MINSPEED;
+  double currentTopSpeed = MAX_;	// convert speed to Hz
+  double currentBotSpeed = MIN_;
 
   double newMaxSpeed = speedratio * (currentTopSpeed - currentBotSpeed) + currentBotSpeed;
-  MAXSPEED = 50000 / newMaxSpeed; // convert back to ArDuiNO sPEak
+  MAXSPEED = 500000 / newMaxSpeed; // convert back to ArDuiNO sPEak
+  //Serial.println(MAXSPEED);
 }
 void motorControl (double input) {
   // do entire control loop in here

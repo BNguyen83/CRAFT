@@ -16,7 +16,7 @@ boolean firstPeak = 0;
 unsigned long t = 0;
 
 void forceSetup() {
-  Serial.begin(57600);
+  Serial.begin(9600);
   delay(10);
 
   LoadCell.begin();
@@ -33,44 +33,38 @@ void resetForceFlag() {
 
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
-  const int settlingTime = 0;
-  if (firstPeak == 0) {
-    if (LoadCell.update()) newDataReady = true;
-    // get smoothed value from the dataset:
-    if (newDataReady) {
-      float i = LoadCell.getData();
-      if (i < overload) {
-        if (i >= *maxForce) {
-          *maxForce = i;
-          newDataReady = 0;
-        }
-        else if (*maxForce - i > 0) {
-          firstPeak = 1;
-          newDataReady = 0;
-        }
-        else if (i >= overload) {
-        stopMotor(true);
-        }
+  const int settlingTime = 300;
+  if (LoadCell.update()) newDataReady = true;
+  // get smoothed value from the dataset:
+  if (newDataReady) {
+    if (millis() > t > settlingTime) {
+      float n = LoadCell.getData();
+      if (n >= *maxForce) {
+        *maxForce = n;
+        newDataReady = 0;
       }
     }
   }
 }
+
 void measureRemoval(int* minForce) {
   static boolean newDataReady = 0;
-  const int settlingTime = 0;
+  const int settlingTime = 300;
   if (LoadCell.update()) newDataReady = 1;
   // get smoothed value from the dataset:
   if (newDataReady) {
-    float i = LoadCell.getData();
-    if (i > *minForce ) {
-      *minForce = i;
-      newDataReady = 0;
+    if (millis() > t > settlingTime) {
+      float n = LoadCell.getData();
+      if (n > *minForce ) {
+        *minForce = n;
+        newDataReady = 0;
+      }
     }
   }
 }
 
 void forceCalibrationSetup() {
-  Serial.begin(57600); delay(10);
+  Serial.begin(9600); delay(10);
   Serial.println();
   Serial.println("Starting...");
 
