@@ -1,4 +1,4 @@
-#indef FORCECALIBRATION_h
+#ifndef FORCECALIBRATION_h
 #define FORCECALIBRATION_h
 
 void forceCalibrationSetup();

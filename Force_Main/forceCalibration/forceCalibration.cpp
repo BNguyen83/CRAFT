@@ -1,16 +1,19 @@
 #include <Arduino.h>
+#include "HX711ADC.h"
 #include "forceCalibration.h"
 
-const int HX711_dout = 2; //mcu > HX711 dout pin
-const int HX711_sck = 3; //mcu > HX711 sck pin
+const int HX711_dout = 31; //mcu > HX711 dout pin
+const int HX711_sck = 30; //mcu > HX711 sck pin
 
 //HX711 constructor:
+
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
+
 
 unsigned long t = 0;
 
-void forceCalibrationSetup(){
-  Serial.begin(57600); delay(10);
+void forceCalibrationSetup() {
+  Serial.begin(9600); delay(10);
   Serial.println();
   Serial.println("Starting...");
 
@@ -28,10 +31,10 @@ void forceCalibrationSetup(){
     Serial.println("Startup is complete");
   }
   while (!LoadCell.update());
-  calibrate(); //start calibration procedure
+  forceCalibration(); //start calibration procedure
 }
 
-void forceCalibration(){
+void forceCalibration() {
   Serial.println("***");
   Serial.println("Start calibration:");
   Serial.println("Place the load cell an a level stable surface.");
@@ -94,6 +97,4 @@ void forceCalibration(){
       Serial.println("exit");
     }
   }
-}
-
 }

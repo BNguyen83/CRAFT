@@ -1,5 +1,6 @@
-#include <H.h>
-
+#include "HX711ADC.h"
+#include "forceCalibration.h"
+#include <Arduino.h>
 //pins:
 
 
