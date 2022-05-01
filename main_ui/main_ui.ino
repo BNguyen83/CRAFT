@@ -73,6 +73,7 @@ int   cycleCounter = 0;
 
 int maxForce = 0;
 int minForce = 0;
+float loadCellCalibration = 78;
 
 /*** State machine flags ***/
 int mainState  = 0; // Main
@@ -115,6 +116,7 @@ void loop()
   // "interupts" Handler
   interruptHand();
   //if(endFlag != 0){mainState = 9;}
+
   /*
     insertionForce(&maxforce);
     Serial.print("Insertion Force (kg): ");
@@ -186,6 +188,8 @@ void loop()
 
           }
           printFlag = 1;
+          iniConfig();
+          Serial.println(loadCellCalibration);
           if (key == 'A') {
             menuState++;
             printFlag = 0;
@@ -732,7 +736,7 @@ void loop()
             pauseState = 0;
             printFlag = 0;
           }
-          Serial.println(changeTopSpeed(1));
+          changeTopSpeed(1);
           break;
       } // This } is for 'pauseState'
 
@@ -1011,13 +1015,28 @@ void testEnd() {
   }
 }
 
-void createConfig(){
+void iniConfig(){
   if(SD.exists("config.txt")){
-    
+    conRead();
     }
   else{
+    conFormat();
+    }
+    conf.close();
     
+}
+
+void conFormat(){
+  conf = SD.open("config.txt", FILE_WRITE);
+  conf.print(loadCellCalibration);
+  }
+
+void conRead(){
+  conf = SD.open("config.txt", FILE_READ);
+      while (conf.available()) {
+
     }
 
-
-}
+  loadCellCalibration = conf.read();
+        Serial.write(loadCellCalibration);
+  }
