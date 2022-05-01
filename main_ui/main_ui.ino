@@ -188,8 +188,8 @@ void loop()
 
           }
           printFlag = 1;
-          iniConfig();
-          Serial.println(loadCellCalibration);
+          //iniConfig();
+          //Serial.println(loadCellCalibration);
           if (key == 'A') {
             menuState++;
             printFlag = 0;
@@ -1038,5 +1038,5 @@ void conRead(){
     }
 
   loadCellCalibration = conf.read();
-        Serial.write(loadCellCalibration);
+        //Serial.write(loadCellCalibration);
   }
