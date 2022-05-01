@@ -16,9 +16,6 @@ boolean firstPeak = 0;
 unsigned long t = 0;
 
 void forceSetup() {
-  Serial.begin(9600);
-  delay(10);
-
   LoadCell.begin();
   unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
@@ -28,18 +25,21 @@ void forceSetup() {
 }
 
 void resetForceFlag() {
-  firstPeak = 0;
+  firstPeak = 1;
 }
 
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
-  if (LoadCell.update()) newDataReady = true; firstPeak = 1;
+  if (LoadCell.update()) newDataReady = true;
   // get smoothed value from the dataset:
-  if (newDataReady) {
+  if (newDataReady && firstPeak) {
     float n = LoadCell.getData();
-    if (n >= *maxForce) {
+    if ( n >= *maxForce) {
       *maxForce = n;
+      newDataReady = 0;
+    }
+    else if (n < *maxForce) {
       newDataReady = 0;
       firstPeak = 0;
     }
@@ -53,7 +53,7 @@ void measureRemoval(int* minForce) {
   // get smoothed value from the dataset:
   if (newDataReady) {
     float n = LoadCell.getData();
-    if (n > *minForce ) {
+    if (n >= *minForce) {
       *minForce = n;
       newDataReady = 0;
     }

@@ -104,7 +104,7 @@ void setup()
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
 
-  Serial.begin(9600);
+  Serial.begin(230400);
 
   /* Other function initializations go here */
 }
@@ -188,11 +188,11 @@ void loop()
 
           }
           printFlag = 1;
-<<<<<<< Updated upstream
+          //<<< <<< < Updated upstream
           //iniConfig();
-=======
-          iniConfig();
->>>>>>> Stashed changes
+          //== == == =
+          //iniConfig();
+          //>>> >>> > Stashed changes
           //Serial.println(loadCellCalibration);
           if (key == 'A') {
             menuState++;
@@ -428,7 +428,7 @@ void loop()
             menuState--;
             printFlag = 0;
           } break;
- 
+
         case 8: // Dwell time
           if (printFlag == 0) {
             top.clear();
@@ -526,12 +526,14 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
+          minForce = 0;
+          maxForce = 0;
           break;
 
         //---------------------------------------------------------------------------
         // cycle procedure
         case 1: // insertion
-          //resetForceFlag();
+          resetForceFlag();
           setPosition(0);    // move to closed position
           mainState = 5;
           if (key == 'D') {
@@ -539,12 +541,13 @@ void loop()
             pauseState = 0;
             printFlag = 0;
             disableMotor(true);
-            //resetForceFlag();
           }
           break;
         case 2:
+          //Serial.println("End of insertion");
           measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
+          resetForceFlag();
           setPosition(trvDistance * -1);
           mainState = 5;
           if (key == 'D') {
@@ -555,7 +558,7 @@ void loop()
           }
           break;
         case 3:
-
+          Serial.println("End of removal");
           printToSD();        // print stuff to SD card
           cycleCounter++;
           testEnd();
@@ -573,8 +576,7 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
-          minForce = 0;
-          maxForce = 0;
+
           break;
           /*
             case 1: // User/System pause
@@ -650,9 +652,8 @@ void loop()
           break;   // enableMotor
         case 1: // put the stuff you want to do here
           switch (testState) {
-            case 1: measureInsertion(&maxForce); Serial.println(maxForce); break;
-            case 2: //measureRemoval(&minForce); Serial.println(minForce);
-              break;
+            case 1: measureInsertion(&maxForce); break;
+            case 2: measureRemoval(&minForce); break;
           }
           if (isRun() != 1) motorState = 2;
 
@@ -803,7 +804,7 @@ void loop()
           printFlag = 0;
           mainState = 6;
           printFlag = 0;
- 
+
           break;
       }
       break;
@@ -857,23 +858,23 @@ void loop()
       }
       break;
 
-//    case 10: // end screen
-//      if (printFlag == 0) {
-//        top.clear();
-//        bot.clear();
-//        top.setCursor(1, 0);
-//        top.print("Test is now complete!");
-//        top.setCursor(1, 1);
-//        top.print("Cycles completed: ");
-//        top.setCursor(19, 1);
-//        top.print(cycleCounter);
-//        bot.setCursor(1, 0);
-//        bot.print("End condition: ");
-//
-//      }
-//      break;
-//
-//      //default:
+      //    case 10: // end screen
+      //      if (printFlag == 0) {
+      //        top.clear();
+      //        bot.clear();
+      //        top.setCursor(1, 0);
+      //        top.print("Test is now complete!");
+      //        top.setCursor(1, 1);
+      //        top.print("Cycles completed: ");
+      //        top.setCursor(19, 1);
+      //        top.print(cycleCounter);
+      //        bot.setCursor(1, 0);
+      //        bot.print("End condition: ");
+      //
+      //      }
+      //      break;
+      //
+      //      //default:
 
       break;
 
@@ -905,7 +906,12 @@ void printToSD() {
     myFile.print(res[g]);
     myFile.print(" ");
   }
+  myFile.print("\t");
+  myFile.print(maxForce);
+  myFile.print(" ");
+  myFile.print(minForce);
   myFile.println();
+
 }
 
 void convertSpeed(float input) {
@@ -1019,28 +1025,28 @@ void testEnd() {
   }
 }
 
-void iniConfig(){
-  if(SD.exists("config.txt")){
+void iniConfig() {
+  if (SD.exists("config.txt")) {
     conRead();
-    }
-  else{
+  }
+  else {
     conFormat();
-    }
-    conf.close();
-    
+  }
+  conf.close();
+
 }
 
-void conFormat(){
+void conFormat() {
   conf = SD.open("config.txt", FILE_WRITE);
   conf.print(loadCellCalibration);
-  }
+}
 
-void conRead(){
+void conRead() {
   conf = SD.open("config.txt", FILE_READ);
-      while (conf.available()) {
+  while (conf.available()) {
 
-    }
+  }
 
   loadCellCalibration = conf.read();
-        //Serial.write(loadCellCalibration);
-  }
+  //Serial.write(loadCellCalibration);
+}
