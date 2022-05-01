@@ -52,3 +52,10 @@ int changeTopSpeed(double speedRatio){
 	}
 	return errorCode;
 }
+
+void menuMotor(double pos){
+  setPosition(pos); // move to the offset position
+  disableMotor(false);
+  while(isRun());
+  disableMotor(true);
+}

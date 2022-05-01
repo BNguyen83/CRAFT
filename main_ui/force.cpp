@@ -33,16 +33,15 @@ void resetForceFlag() {
 
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
-  const int settlingTime = 300;
+  const int settlingTime = 0;
   if (LoadCell.update()) newDataReady = true;
   // get smoothed value from the dataset:
   if (newDataReady) {
-    if (millis() > t > settlingTime) {
-      float n = LoadCell.getData();
-      if (n >= *maxForce) {
-        *maxForce = n;
-        newDataReady = 0;
-      }
+    float n = LoadCell.getData();
+    if (n >= *maxForce) {
+      *maxForce = n;
+      newDataReady = 0;
+
     }
   }
 }

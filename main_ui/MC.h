@@ -29,4 +29,6 @@ double jogMotor(double offsetPos);
 	return error code 0 = no error
 */ 
 int changeTopSpeed(double speedRatio);
+
+void menuMotor(double pos);
 #endif
