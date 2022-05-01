@@ -34,14 +34,14 @@ void resetForceFlag() {
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
   const int settlingTime = 0;
-  if (LoadCell.update()) newDataReady = true;
+  if (LoadCell.update()) newDataReady = true; firstPeak = 1;
   // get smoothed value from the dataset:
   if (newDataReady) {
     float n = LoadCell.getData();
     if (n >= *maxForce) {
       *maxForce = n;
       newDataReady = 0;
-
+      firstPeak = 0;
     }
   }
 }
@@ -52,12 +52,10 @@ void measureRemoval(int* minForce) {
   if (LoadCell.update()) newDataReady = 1;
   // get smoothed value from the dataset:
   if (newDataReady) {
-    if (millis() > t > settlingTime) {
-      float n = LoadCell.getData();
-      if (n > *minForce ) {
-        *minForce = n;
-        newDataReady = 0;
-      }
+    float n = LoadCell.getData();
+    if (n > *minForce ) {
+      *minForce = n;
+      newDataReady = 0;
     }
   }
 }
@@ -84,7 +82,7 @@ void forceCalibrationSetup() {
   forceCalibration(); //start calibration procedure
 }
 
-void forceCalibration() {
+float forceCalibration() {
   Serial.println("***");
   Serial.println("Start calibration:");
   Serial.println("Place the load cell an a level stable surface.");
@@ -129,22 +127,8 @@ void forceCalibration() {
   Serial.print("New calibration value has been set to: ");
   Serial.print(newCalibrationValue);
   Serial.println(", use this as calibration value (calFactor) in your project sketch.");
-
   _resume = true;
+  Serial.println("exit");
 
-  Serial.println("End calibration");
-  Serial.println("***");
-  Serial.println("To re-calibrate, send 'r' from serial monitor.");
-  Serial.println("For manual edit of the calibration value, send 'c' from serial monitor.");
-  Serial.println("***");
-  Serial.println("End change calibration value");
-  Serial.println("***");
-  // receive command from serial terminal
-  if (Serial.available() > 0) {
-    char inByte = Serial.read();
-    if (inByte == 't') {
-      Serial.println("exit");
-      Serial.println("exit");
-    }
-  }
+  return (newCalibrationValue);
 }

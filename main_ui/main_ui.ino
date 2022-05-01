@@ -188,7 +188,11 @@ void loop()
 
           }
           printFlag = 1;
+<<<<<<< Updated upstream
           //iniConfig();
+=======
+          iniConfig();
+>>>>>>> Stashed changes
           //Serial.println(loadCellCalibration);
           if (key == 'A') {
             menuState++;
