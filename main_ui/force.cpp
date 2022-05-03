@@ -5,23 +5,21 @@
 #include "MC.h"
 
 // volatile boolean newDataReady; ---- uncomment this when using interrupt
-float calibrationValue = 88.47; // set the calibration value in the sketch
+float calibrationValue = .872; // set the calibration value in the sketch
 const int HX711_dout = 30; //mcu > HX711 dout pin
 const int HX711_sck = 31; //mcu > HX711 sck pin
 
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
 
-int overload = 20000;
 boolean firstPeak = 0;
 unsigned long t = 0;
 
 void forceSetup() {
   LoadCell.begin();
-  unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
+  unsigned long stabilizingtime = 4000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
   LoadCell.start(stabilizingtime, _tare); //if start fails, check wiring and pin destination
   LoadCell.setCalFactor(calibrationValue); // set calibration value (float)
-  Serial.println("Setup is Ready");
 }
 
 void resetForceFlag() {
@@ -61,10 +59,6 @@ void measureRemoval(int* minForce) {
 }
 
 void forceCalibrationSetup() {
-  Serial.begin(9600); delay(10);
-  Serial.println();
-  Serial.println("Starting...");
-
   LoadCell.begin();
   //LoadCell.setReverseOutput(); //uncomment to turn a negative output value to positive
   unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time

@@ -94,17 +94,18 @@ int holdMainState = 0;
 /****** SETUP ******/
 void setup()
 {
+  forceSetup();
+  delay(2000);
   // Initialize top and bottom LCD
   top.begin(40, 2);
   bot.begin(40, 2);
 
   RMESini(20);
   setupMC(0.1, 0.02);
-  forceSetup();
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
 
-  Serial.begin(230400);
+  //Serial.begin(9600);
 
   /* Other function initializations go here */
 }
@@ -233,7 +234,6 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             cycleCount = ms.toInt();
-            Serial.println(cycleCount);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -309,7 +309,6 @@ void loop()
             if (trvDistance > 30) {
               trvDistance = 30;
             }
-            Serial.println(trvDistance);
             menuMotor(trvDistance * -1); // move to new open position
             menuState++;
             i = 0;
@@ -346,7 +345,6 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             maxRes = ms.toInt();
-            Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -382,7 +380,7 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             maxInForce_LIMIT = ms.toFloat();
-            Serial.println(maxInForce_LIMIT);
+
             menuState++;
             i = 0;
             printFlag = 0;
@@ -417,7 +415,6 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             minRemForce_LIMIT = ms.toFloat();
-            Serial.println(minRemForce_LIMIT);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -454,7 +451,6 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             dwellTime = ms.toFloat();
-            Serial.println(dwellTime);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -510,12 +506,10 @@ void loop()
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
             bot.print(maxForce);
-            Serial.println(maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
             bot.print(minForce);
-            Serial.println(minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
@@ -558,12 +552,12 @@ void loop()
           }
           break;
         case 3:
-          Serial.println("End of removal");
           printToSD();        // print stuff to SD card
           cycleCounter++;
-          testEnd();
+          //testEnd();
+          endFlag = 4;
           //------------------------------------------------------------------------
-          if (cycleCounter >= cycleCount + 1) {
+          if (cycleCounter > cycleCount) {
             mainState = 9;
             menuState = 0;
             printFlag = 0;
@@ -649,7 +643,6 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
-          break;   // enableMotor
         case 1: // put the stuff you want to do here
           switch (testState) {
             case 1: measureInsertion(&maxForce); break;
@@ -858,25 +851,24 @@ void loop()
       }
       break;
 
-      //    case 10: // end screen
-      //      if (printFlag == 0) {
-      //        top.clear();
-      //        bot.clear();
-      //        top.setCursor(1, 0);
-      //        top.print("Test is now complete!");
-      //        top.setCursor(1, 1);
-      //        top.print("Cycles completed: ");
-      //        top.setCursor(19, 1);
-      //        top.print(cycleCounter);
-      //        bot.setCursor(1, 0);
-      //        bot.print("End condition: ");
-      //
-      //      }
-      //      break;
-      //
-      //      //default:
-
+    case 10: // end screen
+      if (printFlag == 0) {
+        top.clear();
+        bot.clear();
+        top.setCursor(1, 0);
+        top.print("Test is now complete!");
+        top.setCursor(1, 1);
+        top.print("Cycles completed: ");
+        top.setCursor(19, 1);
+        top.print(cycleCounter);
+        bot.setCursor(1, 0);
+        bot.print("End condition: ");
+      }
       break;
+
+    //  default: break;
+
+      //break;
 
   }// This } is for 'switch(mainState)'
   resetIntFlag();

@@ -7,7 +7,7 @@
 
 const int HX711_dout = 30; //mcu > HX711 dout pin
 const int HX711_sck = 31; //mcu > HX711 sck pin
-float calibrationValue = 879; // set the calibration value in the sketch
+float calibrationValue = 878.26; // set the calibration value in the sketch
 
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
 
@@ -44,32 +44,8 @@ void measureInsertion(int* maxForce) {
       float i = LoadCell.getData();
       if (i >= *maxForce ) {
         *maxForce = i;
+        newDataReady = 0;
       }
-    }
-  }
-}
-
-void measureRemoval(int* minForce) {
-  static boolean newDataReady = 0;
-  const int settlingTime = 0;
-  int minUser = 10;
-  if (LoadCell.update()) newDataReady = 1;
-
-  // get smoothed value from the dataset:
-  if (newDataReady) {
-    if (millis() > t + settlingTime) {
-      float i = LoadCell.getData();
-      if (i > minUser) {
-        if (i > *minForce ) {
-          *minForce = i;
-        }
-      }
-      else if (i <= minUser && *minForce < minUser) {
-        LoadCell.powerDown();
-        Serial.println("User Condition is met");
-      }
-      newDataReady = 0;
-      t = millis();
     }
   }
 }

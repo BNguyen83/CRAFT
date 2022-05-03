@@ -94,7 +94,6 @@ void forceCalibration() {
     char inByte = Serial.read();
     if (inByte == 't') {
       Serial.println("exit");
-      Serial.println("exit");
     }
   }
 }
