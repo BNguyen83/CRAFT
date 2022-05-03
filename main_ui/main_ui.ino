@@ -505,11 +505,11 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
-            bot.print(maxForce);
+            bot.print((int)maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
-            bot.print(minForce);
+            bot.print((int)minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
@@ -554,8 +554,8 @@ void loop()
         case 3:
           printToSD();        // print stuff to SD card
           cycleCounter++;
-          //testEnd();
-          endFlag = 4;
+          testEnd();
+          //endFlag = 4;
           //------------------------------------------------------------------------
           if (cycleCounter > cycleCount) {
             mainState = 9;

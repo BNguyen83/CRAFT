@@ -5,7 +5,7 @@
 #include "MC.h"
 
 // volatile boolean newDataReady; ---- uncomment this when using interrupt
-float calibrationValue = .872; // set the calibration value in the sketch
+float calibrationValue = 870.62; // set the calibration value in the sketch
 const int HX711_dout = 30; //mcu > HX711 dout pin
 const int HX711_sck = 31; //mcu > HX711 sck pin
 
