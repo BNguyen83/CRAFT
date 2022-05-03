@@ -509,10 +509,12 @@ void loop()
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
-            bot.print((int)minForce);
+            bot.print(minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
+          minForce = 0;
+          maxForce = 0;
           testState = 1;
           if (key == 'D') {
             mainState = 6;
@@ -520,8 +522,6 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
-          minForce = 0;
-          maxForce = 0;
           break;
 
         //---------------------------------------------------------------------------
@@ -899,7 +899,7 @@ void printToSD() {
     myFile.print(" ");
   }
   myFile.print("\t");
-  myFile.print(maxForce);
+  myFile.print((int)maxForce);
   myFile.print(" ");
   myFile.print(minForce);
   myFile.println();

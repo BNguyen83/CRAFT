@@ -15,8 +15,9 @@ boolean firstPeak = 0;
 unsigned long t = 0;
 
 void forceSetup() {
+  delay (300);
   LoadCell.begin();
-  unsigned long stabilizingtime = 4000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
+  unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
   LoadCell.start(stabilizingtime, _tare); //if start fails, check wiring and pin destination
   LoadCell.setCalFactor(calibrationValue); // set calibration value (float)
@@ -46,7 +47,7 @@ void measureInsertion(int* maxForce) {
 
 void measureRemoval(int* minForce) {
   static boolean newDataReady = 0;
-  const int settlingTime = 300;
+  const int settlingTime = 0;
   if (LoadCell.update()) newDataReady = 1;
   // get smoothed value from the dataset:
   if (newDataReady) {
