@@ -1,270 +1,558 @@
+/*
+   -------------------------------------------------------------------------------------
+   HX711_ADC
+   Arduino library for HX711 24-Bit Analog-to-Digital Converter for Weight Scales
+   Olav Kallhovd sept2017
+   -------------------------------------------------------------------------------------
+*/
+
 #include <Arduino.h>
 #include "HX711ADC.h"
 
-// TEENSYDUINO has a port of Dean Camera's ATOMIC_BLOCK macros for AVR to ARM Cortex M3.
-#define HAS_ATOMIC_BLOCK (defined(ARDUINO_ARCH_AVR) || defined(TEENSYDUINO))
 
-// Whether we are running on either the ESP8266 or the ESP32.
-#define ARCH_ESPRESSIF (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
+HX711_ADC::HX711_ADC(uint8_t dout, uint8_t sck) //constructor
+{   
+  doutPin = dout;
+  sckPin = sck;
+} 
 
-// Whether we are actually running on FreeRTOS.
-#define IS_FREE_RTOS defined(ARDUINO_ARCH_ESP32)
+void HX711_ADC::setGain(uint8_t gain)  //value should be 32, 64 or 128*
+{
+  if(gain < 64) GAIN = 2; //32, channel B
+  else if(gain < 128) GAIN = 3; //64, channel A
+  else GAIN = 1; //128, channel A
+}
 
-// Define macro designating whether we're running on a reasonable
-// fast CPU and so should slow down sampling from GPIO.
-#define FAST_CPU \
-    ( \
-    ARCH_ESPRESSIF || \
-    defined(ARDUINO_ARCH_SAM)     || defined(ARDUINO_ARCH_SAMD) || \
-    defined(ARDUINO_ARCH_STM32)   || defined(TEENSYDUINO) \
-    )
+//set pinMode, HX711 gain and power up the HX711
+void HX711_ADC::begin()
+{
+  pinMode(sckPin, OUTPUT);
+  pinMode(doutPin, INPUT);
+  setGain(128);
+  powerUp();
+}
 
-#if HAS_ATOMIC_BLOCK
-// Acquire AVR-specific ATOMIC_BLOCK(ATOMIC_RESTORESTATE) macro.
-#include <util/atomic.h>
-#endif
+//set pinMode, HX711 selected gain and power up the HX711
+void HX711_ADC::begin(uint8_t gain)
+{
+  pinMode(sckPin, OUTPUT);
+  pinMode(doutPin, INPUT);
+  setGain(gain);
+  powerUp();
+}
 
-#if FAST_CPU
-// Make shiftIn() be aware of clockspeed for
-// faster CPUs like ESP32, Teensy 3.x and friends.
-// See also:
-// - https://github.com/bogde/HX711/issues/75
-// - https://github.com/arduino/Arduino/issues/6561
-// - https://community.hiveeyes.org/t/using-bogdans-canonical-hx711-library-on-the-esp32/539
+/*  start(t): 
+* will do conversions continuously for 't' +400 milliseconds (400ms is min. settling time at 10SPS). 
+*   Running this for 1-5s in setup() - before tare() seems to improve the tare accuracy */
+void HX711_ADC::start(unsigned long t)
+{
+  t += 400;
+  lastDoutLowTime = millis();
+  while(millis() < t) 
+  {
+    update();
+    yield();
+  }
+  tare();
+  tareStatus = 0;
+} 
 
-uint8_t shiftInSlow(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {
-    uint8_t value = 0;
-    uint8_t i;
+/*  start(t, dotare) with selectable tare:
+* will do conversions continuously for 't' +400 milliseconds (400ms is min. settling time at 10SPS). 
+*   Running this for 1-5s in setup() - before tare() seems to improve the tare accuracy. */
+void HX711_ADC::start(unsigned long t, bool dotare)
+{
+  t += 400;
+  lastDoutLowTime = millis();
+  while(millis() < t) 
+  {
+    update();
+    yield();
+  }
+  if (dotare)
+  {
+    tare();
+    tareStatus = 0;
+  }
+} 
 
-    for(i = 0; i < 8; ++i) {
-        digitalWrite(clockPin, HIGH);
-        delayMicroseconds(1);
-        if(bitOrder == LSBFIRST)
-            value |= digitalRead(dataPin) << i;
-        else
-            value |= digitalRead(dataPin) << (7 - i);
-        digitalWrite(clockPin, LOW);
-        delayMicroseconds(1);
+/*  startMultiple(t): use this if you have more than one load cell and you want to do tare and stabilization simultaneously.
+* Will do conversions continuously for 't' +400 milliseconds (400ms is min. settling time at 10SPS). 
+*   Running this for 1-5s in setup() - before tare() seems to improve the tare accuracy */
+int HX711_ADC::startMultiple(unsigned long t)
+{
+  tareTimeoutFlag = 0;
+  lastDoutLowTime = millis();
+  if(startStatus == 0) {
+    if(isFirst) {
+      startMultipleTimeStamp = millis();
+      if (t < 400) 
+      {
+        startMultipleWaitTime = t + 400; //min time for HX711 to be stable
+      } 
+      else 
+      {
+        startMultipleWaitTime = t;
+      }
+      isFirst = 0;
+    } 
+    if((millis() - startMultipleTimeStamp) < startMultipleWaitTime) {
+      update(); //do conversions during stabilization time
+      yield();
+      return 0;
     }
-    return value;
-}
-#define SHIFTIN_WITH_SPEED_SUPPORT(data,clock,order) shiftInSlow(data,clock,order)
-#else
-#define SHIFTIN_WITH_SPEED_SUPPORT(data,clock,order) shiftIn(data,clock,order)
-#endif
-
-#ifdef ARCH_ESPRESSIF
-// ESP8266 doesn't read values between 0x20000 and 0x30000 when DOUT is pulled up.
-#define DOUT_MODE INPUT
-#else
-#define DOUT_MODE INPUT_PULLUP
-#endif
-
-
-HX711::HX711() {
-}
-
-HX711::~HX711() {
-}
-
-void HX711::begin(byte dout, byte pd_sck, byte gain) {
-  PD_SCK = pd_sck;
-  DOUT = dout;
-
-  pinMode(PD_SCK, OUTPUT);
-  pinMode(DOUT, DOUT_MODE);
-
-  set_gain(gain);
-}
-
-bool HX711::is_ready() {
-  return digitalRead(DOUT) == LOW;
-}
-
-void HX711::set_gain(byte gain) {
-  switch (gain) {
-    case 128:   // channel A, gain factor 128
-      GAIN = 1;
-      break;
-    case 64:    // channel A, gain factor 64
-      GAIN = 3;
-      break;
-    case 32:    // channel B, gain factor 32
-      GAIN = 2;
-      break;
-  }
-
-}
-
-long HX711::read() {
-
-  // Wait for the chip to become ready.
-  wait_ready();
-
-  // Define structures for reading data into.
-  unsigned long value = 0;
-  uint8_t data[3] = { 0 };
-  uint8_t filler = 0x00;
-
-  // Protect the read sequence from system interrupts.  If an interrupt occurs during
-  // the time the PD_SCK signal is high it will stretch the length of the clock pulse.
-  // If the total pulse time exceeds 60 uSec this will cause the HX711 to enter
-  // power down mode during the middle of the read sequence.  While the device will
-  // wake up when PD_SCK goes low again, the reset starts a new conversion cycle which
-  // forces DOUT high until that cycle is completed.
-  //
-  // The result is that all subsequent bits read by shiftIn() will read back as 1,
-  // corrupting the value returned by read().  The ATOMIC_BLOCK macro disables
-  // interrupts during the sequence and then restores the interrupt mask to its previous
-  // state after the sequence completes, insuring that the entire read-and-gain-set
-  // sequence is not interrupted.  The macro has a few minor advantages over bracketing
-  // the sequence between `noInterrupts()` and `interrupts()` calls.
-  #if HAS_ATOMIC_BLOCK
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-
-  #elif IS_FREE_RTOS
-  // Begin of critical section.
-  // Critical sections are used as a valid protection method
-  // against simultaneous access in vanilla FreeRTOS.
-  // Disable the scheduler and call portDISABLE_INTERRUPTS. This prevents
-  // context switches and servicing of ISRs during a critical section.
-  portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-  portENTER_CRITICAL(&mux);
-
-  #else
-  // Disable interrupts.
-  noInterrupts();
-  #endif
-
-  // Pulse the clock pin 24 times to read the data.
-  data[2] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);
-  data[1] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);
-  data[0] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);
-
-  // Set the channel and the gain factor for the next reading using the clock pin.
-  for (unsigned int i = 0; i < GAIN; i++) {
-    digitalWrite(PD_SCK, HIGH);
-    #if ARCH_ESPRESSIF
-    delayMicroseconds(1);
-    #endif
-    digitalWrite(PD_SCK, LOW);
-    #if ARCH_ESPRESSIF
-    delayMicroseconds(1);
-    #endif
-  }
-
-  #if IS_FREE_RTOS
-  // End of critical section.
-  portEXIT_CRITICAL(&mux);
-
-  #elif HAS_ATOMIC_BLOCK
-  }
-
-  #else
-  // Enable interrupts again.
-  interrupts();
-  #endif
-
-  // Replicate the most significant bit to pad out a 32-bit signed integer
-  if (data[2] & 0x80) {
-    filler = 0xFF;
-  } else {
-    filler = 0x00;
-  }
-
-  // Construct a 32-bit signed integer
-  value = ( static_cast<unsigned long>(filler) << 24
-      | static_cast<unsigned long>(data[2]) << 16
-      | static_cast<unsigned long>(data[1]) << 8
-      | static_cast<unsigned long>(data[0]) );
-
-  return static_cast<long>(value);
-}
-
-void HX711::wait_ready(unsigned long delay_ms) {
-  // Wait for the chip to become ready.
-  // This is a blocking implementation and will
-  // halt the sketch until a load cell is connected.
-  while (!is_ready()) {
-    // Probably will do no harm on AVR but will feed the Watchdog Timer (WDT) on ESP.
-    // https://github.com/bogde/HX711/issues/73
-    delay(delay_ms);
-  }
-}
-
-bool HX711::wait_ready_retry(int retries, unsigned long delay_ms) {
-  // Wait for the chip to become ready by
-  // retrying for a specified amount of attempts.
-  // https://github.com/bogde/HX711/issues/76
-  int count = 0;
-  while (count < retries) {
-    if (is_ready()) {
-      return true;
+    else { //do tare after stabilization time is up
+      static unsigned long timeout = millis() + tareTimeOut;
+      doTare = 1;
+      update();
+      if(convRslt == 2) 
+      { 
+        doTare = 0;
+        convRslt = 0;
+        startStatus = 1;
+      }
+      if (!tareTimeoutDisable) 
+      {
+        if (millis() > timeout) 
+        { 
+        tareTimeoutFlag = 1;
+        return 1; // Prevent endless loop if no HX711 is connected
+        }
+      }
     }
-    delay(delay_ms);
-    count++;
+  }
+  return startStatus;
+}
+
+/*  startMultiple(t, dotare) with selectable tare: 
+* use this if you have more than one load cell and you want to (do tare and) stabilization simultaneously.
+* Will do conversions continuously for 't' +400 milliseconds (400ms is min. settling time at 10SPS). 
+*   Running this for 1-5s in setup() - before tare() seems to improve the tare accuracy */
+int HX711_ADC::startMultiple(unsigned long t, bool dotare)
+{
+  tareTimeoutFlag = 0;
+  lastDoutLowTime = millis();
+  if(startStatus == 0) {
+    if(isFirst) {
+      startMultipleTimeStamp = millis();
+      if (t < 400) 
+      {
+        startMultipleWaitTime = t + 400; //min time for HX711 to be stable
+      } 
+      else 
+      {
+        startMultipleWaitTime = t;
+      }
+      isFirst = 0;
+    } 
+    if((millis() - startMultipleTimeStamp) < startMultipleWaitTime) {
+      update(); //do conversions during stabilization time
+      yield();
+      return 0;
+    }
+    else { //do tare after stabilization time is up
+      if (dotare) 
+      {
+        static unsigned long timeout = millis() + tareTimeOut;
+        doTare = 1;
+        update();
+        if(convRslt == 2) 
+        { 
+          doTare = 0;
+          convRslt = 0;
+          startStatus = 1;
+        }
+        if (!tareTimeoutDisable) 
+        {
+          if (millis() > timeout) 
+          { 
+          tareTimeoutFlag = 1;
+          return 1; // Prevent endless loop if no HX711 is connected
+          }
+        }
+      }
+      else return 1;
+    }
+  }
+  return startStatus;
+}
+
+//zero the scale, wait for tare to finnish (blocking)
+void HX711_ADC::tare() 
+{
+  uint8_t rdy = 0;
+  doTare = 1;
+  tareTimes = 0;
+  tareTimeoutFlag = 0;
+  unsigned long timeout = millis() + tareTimeOut;
+  while(rdy != 2) 
+  {
+    rdy = update();
+    if (!tareTimeoutDisable) 
+    {
+      if (millis() > timeout) 
+      { 
+        tareTimeoutFlag = 1;
+        break; // Prevent endless loop if no HX711 is connected
+      }
+    }
+    yield();
+  }
+}
+
+//zero the scale, initiate the tare operation to run in the background (non-blocking)
+void HX711_ADC::tareNoDelay() 
+{
+  doTare = 1;
+  tareTimes = 0;
+  tareStatus = 0;
+}
+
+//set new calibration factor, raw data is divided by this value to convert to readable data
+void HX711_ADC::setCalFactor(float cal) 
+{
+  calFactor = cal;
+  calFactorRecip = 1/calFactor;
+}
+
+//returns 'true' if tareNoDelay() operation is complete
+bool HX711_ADC::getTareStatus() 
+{
+  bool t = tareStatus;
+  tareStatus = 0;
+  return t;
+}
+
+//returns the current calibration factor
+float HX711_ADC::getCalFactor() 
+{
+  return calFactor;
+}
+
+//call the function update() in loop or from ISR
+//if conversion is ready; read out 24 bit data and add to dataset, returns 1
+//if tare operation is complete, returns 2
+//else returns 0
+uint8_t HX711_ADC::update() 
+{
+  byte dout = digitalRead(doutPin); //check if conversion is ready
+  if (!dout) 
+  {
+    conversion24bit();
+    lastDoutLowTime = millis();
+    signalTimeoutFlag = 0;
+  }
+  else 
+  {
+    //if (millis() > (lastDoutLowTime + SIGNAL_TIMEOUT))
+    if (millis() - lastDoutLowTime > SIGNAL_TIMEOUT)
+    {
+      signalTimeoutFlag = 1;
+    }
+    convRslt = 0;
+  }
+  return convRslt;
+}
+
+// call the function dataWaitingAsync() in loop or from ISR to check if new data is available to read
+// if conversion is ready, just call updateAsync() to read out 24 bit data and add to dataset
+// returns 1 if data available , else 0
+bool HX711_ADC::dataWaitingAsync() 
+{
+  if (dataWaiting) { lastDoutLowTime = millis(); return 1; }
+  byte dout = digitalRead(doutPin); //check if conversion is ready
+  if (!dout) 
+  {
+    dataWaiting = true;
+    lastDoutLowTime = millis();
+    signalTimeoutFlag = 0;
+    return 1;
+  }
+  else
+  {
+    //if (millis() > (lastDoutLowTime + SIGNAL_TIMEOUT))
+    if (millis() - lastDoutLowTime > SIGNAL_TIMEOUT)
+    {
+      signalTimeoutFlag = 1;
+    }
+    convRslt = 0;
+  }
+  return 0;
+}
+
+// if data is available call updateAsync() to convert it and add it to the dataset.
+// call getData() to get latest value
+bool HX711_ADC::updateAsync() 
+{
+  if (dataWaiting) { 
+    conversion24bit();
+    dataWaiting = false;
+    return true;
   }
   return false;
+
 }
 
-bool HX711::wait_ready_timeout(unsigned long timeout, unsigned long delay_ms) {
-  // Wait for the chip to become ready until timeout.
-  // https://github.com/bogde/HX711/pull/96
-  unsigned long millisStarted = millis();
-  while (millis() - millisStarted < timeout) {
-    if (is_ready()) {
-      return true;
+float HX711_ADC::getData() // return fresh data from the moving average dataset
+{
+  long data = 0;
+  lastSmoothedData = smoothedData();
+  data = lastSmoothedData - tareOffset ;
+  float x = (float)data * calFactorRecip;
+  return x;
+}
+
+long HX711_ADC::smoothedData() 
+{
+  long data = 0;
+  long L = 0xFFFFFF;
+  long H = 0x00;
+  for (uint8_t r = 0; r < 1; r++) 
+  {
+    #if IGN_LOW_SAMPLE
+    if (L > dataSampleSet[r]) L = dataSampleSet[r]; // find lowest value
+    #endif
+    #if IGN_HIGH_SAMPLE
+    if (H < dataSampleSet[r]) H = dataSampleSet[r]; // find highest value
+    #endif
+    data += dataSampleSet[r];
+  }
+  #if IGN_LOW_SAMPLE 
+  data -= L; //remove lowest value
+  #endif
+  #if IGN_HIGH_SAMPLE 
+  data -= H; //remove highest value
+  #endif
+  //return data;
+  return (data >> divBit);
+
+}
+
+void HX711_ADC::conversion24bit()  //read 24 bit data, store in dataset and start the next conversion
+{
+  conversionTime = micros() - conversionStartTime;
+  conversionStartTime = micros();
+  unsigned long data = 0;
+  uint8_t dout;
+  convRslt = 0;
+  if(SCK_DISABLE_INTERRUPTS) noInterrupts();
+
+  for (uint8_t i = 0; i < (24 + GAIN); i++) 
+  {   //read 24 bit data + set gain and start next conversion
+    digitalWrite(sckPin, 1);
+    if(SCK_DELAY) delayMicroseconds(1); // could be required for faster mcu's, set value in config.h
+    digitalWrite(sckPin, 0);
+    if (i < (24)) 
+    {
+      dout = digitalRead(doutPin);
+      data = (data << 1) | dout;
+    } else {
+      if(SCK_DELAY) delayMicroseconds(1); // could be required for faster mcu's, set value in config.h
     }
-    delay(delay_ms);
   }
-  return false;
-}
-
-long HX711::read_average(byte times) {
-  long sum = 0;
-  for (byte i = 0; i < times; i++) {
-    sum += read();
-    // Probably will do no harm on AVR but will feed the Watchdog Timer (WDT) on ESP.
-    // https://github.com/bogde/HX711/issues/73
-    delay(0);
+  if(SCK_DISABLE_INTERRUPTS) interrupts();
+  
+  /*
+  The HX711 output range is min. 0x800000 and max. 0x7FFFFF (the value rolls over).
+  In order to convert the range to min. 0x000000 and max. 0xFFFFFF,
+  the 24th bit must be changed from 0 to 1 or from 1 to 0.
+  */
+  data = data ^ 0x800000; // flip the 24th bit 
+  
+  if (data > 0xFFFFFF) 
+  {
+    dataOutOfRange = 1;
+    //Serial.println("dataOutOfRange");
   }
-  return sum / times;
+  if (reverseVal) {
+    data = 0xFFFFFF - data;
+  }
+  if (readIndex == samplesInUse + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE - 1) 
+  {
+    readIndex = 0;
+  }
+  else 
+  {
+    readIndex++;
+  }
+  if(data > 0)  
+  {
+    convRslt++;
+    dataSampleSet[readIndex] = (long)data;
+    if(doTare) 
+    {
+      if (tareTimes < DATA_SET) 
+      {
+        tareTimes++;
+      }
+      else 
+      {
+        tareOffset = smoothedData();
+        tareTimes = 0;
+        doTare = 0;
+        tareStatus = 1;
+        convRslt++;
+      }
+    }
+  }
 }
 
-double HX711::get_value(byte times) {
-  return read_average(times) - OFFSET;
+//power down the HX711
+void HX711_ADC::powerDown() 
+{
+  digitalWrite(sckPin, LOW);
+  digitalWrite(sckPin, HIGH);
 }
 
-float HX711::get_units(byte times) {
-  return get_value(times) / SCALE;
+//power up the HX711
+void HX711_ADC::powerUp() 
+{
+  digitalWrite(sckPin, LOW);
 }
 
-void HX711::tare(byte times) {
-  double sum = read_average(times);
-  set_offset(sum);
+//get the tare offset (raw data value output without the scale "calFactor")
+long HX711_ADC::getTareOffset() 
+{
+  return tareOffset;
 }
 
-void HX711::set_scale(float scale) {
-  SCALE = scale;
+//set new tare offset (raw data value input without the scale "calFactor")
+void HX711_ADC::setTareOffset(long newoffset)
+{
+  tareOffset = newoffset;
 }
 
-float HX711::get_scale() {
-  return SCALE;
+//for testing and debugging:
+//returns current value of dataset readIndex
+int HX711_ADC::getReadIndex()
+{
+  return readIndex;
 }
 
-void HX711::set_offset(long offset) {
-  OFFSET = offset;
+//for testing and debugging:
+//returns latest conversion time in millis
+float HX711_ADC::getConversionTime()
+{
+  return conversionTime/1000.0;
 }
 
-long HX711::get_offset() {
-  return OFFSET;
+//for testing and debugging:
+//returns the HX711 conversions ea seconds based on the latest conversion time. 
+//The HX711 can be set to 10SPS or 80SPS. For general use the recommended setting is 10SPS.
+float HX711_ADC::getSPS()
+{
+  float sps = 1000000.0/conversionTime;
+  return sps;
 }
 
-void HX711::power_down() {
-  digitalWrite(PD_SCK, LOW);
-  digitalWrite(PD_SCK, HIGH);
+//for testing and debugging:
+//returns the tare timeout flag from the last tare operation. 
+//0 = no timeout, 1 = timeout
+bool HX711_ADC::getTareTimeoutFlag() 
+{
+  return tareTimeoutFlag;
 }
 
-void HX711::power_up() {
-  digitalWrite(PD_SCK, LOW);
+void HX711_ADC::disableTareTimeout()
+{
+  tareTimeoutDisable = 1;
+}
+
+long HX711_ADC::getSettlingTime() 
+{
+  long st = getConversionTime() * DATA_SET;
+  return st;
+}
+
+//overide the number of samples in use
+//value is rounded down to the nearest valid value
+void HX711_ADC::setSamplesInUse(int samples)
+{
+  int old_value = samplesInUse;
+  
+  if(samples <= SAMPLES)
+  {
+    if(samples == 0) //reset to the original value
+    {
+      divBit = divBitCompiled;
+    } 
+    else
+    {
+      samples >>= 1;
+      for(divBit = 0; samples != 0; samples >>= 1, divBit++);
+    }
+    samplesInUse = 1 << divBit;
+    
+    //replace the value of all samples in use with the last conversion value
+    if(samplesInUse != old_value) 
+    {
+      for (uint8_t r = 0; r < 1; r++) 
+      {
+        dataSampleSet[r] = lastSmoothedData;
+      }
+      readIndex = 0;
+    }
+  }
+}
+
+//returns the current number of samples in use.
+int HX711_ADC::getSamplesInUse()
+{
+  return samplesInUse;
+}
+
+//resets index for dataset
+void HX711_ADC::resetSamplesIndex()
+{
+  readIndex = 0;
+}
+
+//Fill the whole dataset up with new conversions, i.e. after a reset/restart (this function is blocking once started)
+bool HX711_ADC::refreshDataSet()
+{
+  int s = getSamplesInUse() + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE; // get number of samples in dataset
+  resetSamplesIndex();
+  while ( s > 0 ) {
+    update();
+    yield();
+    if (digitalRead(doutPin) == LOW) { // HX711 dout pin is pulled low when a new conversion is ready
+      getData(); // add data to the set and start next conversion
+      s--;
+    }
+  }
+  return true;
+}
+
+//returns 'true' when the whole dataset has been filled up with conversions, i.e. after a reset/restart.
+bool HX711_ADC::getDataSetStatus()
+{
+  bool i = false;
+  if (readIndex == samplesInUse + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE - 1) 
+  {
+    i = true;
+  }
+  return i;
+}
+
+//returns and sets a new calibration value (calFactor) based on a known mass input
+float HX711_ADC::getNewCalibration(float known_mass)
+{
+  float readValue = getData();
+  float exist_calFactor = getCalFactor();
+  float new_calFactor;
+  new_calFactor = (readValue * exist_calFactor) / known_mass;
+  setCalFactor(new_calFactor);
+    return new_calFactor;
+}
+
+//returns 'true' if it takes longer time then 'SIGNAL_TIMEOUT' for the dout pin to go low after a new conversion is started
+bool HX711_ADC::getSignalTimeoutFlag()
+{
+  return signalTimeoutFlag;
+}
+
+//reverse the output value (flip positive/negative value)
+//tare/zero-offset must be re-set after calling this.
+void HX711_ADC::setReverseOutput() {
+  reverseVal = true;
 }

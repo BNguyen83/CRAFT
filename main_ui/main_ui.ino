@@ -62,7 +62,7 @@ Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 int   cycleCount;
 float trvSpeed;    // Travel speed
 float trvDistance; // Travel Distance
-float   maxRes;      // Max resistance
+float maxRes;      // Max resistance
 float maxInForce_LIMIT;  // Insertion force
 float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
@@ -71,8 +71,8 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
 
-double maxForce = 0;
-double minForce = 0;
+float maxForce = 0;
+float minForce = 0;
 float loadCellCalibration = 871;
 
 /*** State machine flags ***/
@@ -116,7 +116,9 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
-  if(endFlag != 0){mainState = 9;}
+  if (endFlag != 0) {
+    mainState = 9;
+  }
   switch (mainState)
   {
     /********* Main menu *********/
@@ -338,7 +340,7 @@ void loop()
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            maxRes = (float)ms.toInt()/1000.0;
+            maxRes = (float)ms.toInt() / 1000.0;
             Serial.println(maxRes);
             menuState++;
             i = 0;
@@ -508,10 +510,10 @@ void loop()
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
 
-            bot.setCursor(24, 0);
-            bot.print("Res. (O): ");
-            bot.setCursor(35, 0);
-            bot.print(res[resSort()]);
+            top.setCursor(24, 1);
+            top.print("Res. (O): ");
+            top.setCursor(35, 1);
+            top.print(res[resSort()]);
           }
           testState = 1;
           if (key == 'D') {
@@ -558,7 +560,7 @@ void loop()
           cycleCounter++;
           testEnd();
           //endFlag = 4;
-          for(int w = 0; w < 20; w++){
+          for (int w = 0; w < 20; w++) {
             Serial.print(res[w]);
             Serial.print(" ");
           }
@@ -654,7 +656,6 @@ void loop()
           switch (testState) {
             case 1: maxForce = measureInsertion(); break;
             case 2: minForce = measureRemoval(); break;
-            
           }
           if (isRun() != 1) motorState = 2;
 
@@ -1012,8 +1013,12 @@ void resetIntFlag() {
 }
 
 void testEnd() {
-  //if (maxForce > maxInForce_LIMIT) {endFlag = 1;}
-  //if (minForce < minRemForce_LIMIT) endFlag = 2;}
+  if (maxForce > maxInForce_LIMIT) {
+    endFlag = 1;
+  }
+  if (minForce < minRemForce_LIMIT) {
+    endFlag = 2;
+  }
   for (int rescount = 0; rescount < 20; rescount++) {
     if (res[rescount] > maxRes) {
       endFlag = 3;
@@ -1050,10 +1055,10 @@ void conRead() {
   //Serial.write(loadCellCalibration);
 }
 
-int resSort(){
+int resSort() {
   int index = 0;
-  for (int w = 0; w < 20; w++){
-    if(res[w+1] > res[index]) index = w + 1; 
+  for (int w = 0; w < 20; w++) {
+    if (res[w + 1] > res[index]) index = w + 1;
   }
   return index;
 }
