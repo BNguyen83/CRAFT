@@ -105,7 +105,7 @@ void setup()
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
 
-  //Serial.begin(9600);
+  Serial.begin(115200);
 
   /* Other function initializations go here */
 }
@@ -272,7 +272,7 @@ void loop()
             ms.remove(i);
             trvSpeed = ms.toFloat();
             convertSpeed(trvSpeed);
-            Serial.println(trvSpeed);
+            //Serial.println(trvSpeed);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -553,9 +553,16 @@ void loop()
           break;
         case 3:
           printToSD();        // print stuff to SD card
+          //Serial.println(minForce);
+          //Serial.println(maxForce);
           cycleCounter++;
           testEnd();
           //endFlag = 4;
+          for(int w = 0; w < 20; w++){
+            Serial.print(res[w]);
+            Serial.print(" ");
+          }
+          Serial.println();
           //------------------------------------------------------------------------
           if (cycleCounter > cycleCount) {
             mainState = 9;
