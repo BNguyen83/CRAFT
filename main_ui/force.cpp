@@ -21,6 +21,8 @@ void forceSetup() {
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
   LoadCell.start(stabilizingtime, _tare); //if start fails, check wiring and pin destination
   LoadCell.setCalFactor(calibrationValue); // set calibration value (float)
+
+  
 }
 
 void resetForceFlag() {
@@ -34,15 +36,17 @@ void measureInsertion(int* maxForce) {
   // get smoothed value from the dataset:
   if (newDataReady && firstPeak) {
     float n = LoadCell.getData();
+    //Serial.println(n);
     if ( n >= *maxForce) {
       *maxForce = n;
       newDataReady = 0;
     }
     else if (n < *maxForce) {
       newDataReady = 0;
-      firstPeak = 0;
+      //firstPeak = 0; // THIS IS A TEST
     }
   }
+  
 }
 
 void measureRemoval(int* minForce) {
