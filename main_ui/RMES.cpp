@@ -13,7 +13,7 @@
 #define RESB A1
 #define RMESPowerEnable 28
 #define MuxToggle 29
-#define chDelay 10
+#define chDelay 30
 #define ANAVREF 3.304
 #define Rds 0.073
 #define Rsource 0.48

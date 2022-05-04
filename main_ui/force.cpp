@@ -26,27 +26,29 @@ void forceSetup() {
 }
 
 double measureInsertion() {
-  double i = scale.get_units(4);
-  firstPeak = 1;
-  if (firstPeak){
-  if (i >= insertionForce ) {
-    insertionForce = i;
-  }
-  else if (insertionForce - i > 100) {
-    insertionForce = insertionForce;
-    firstPeak = 0;
-  }
+  static boolean newDataReady = 0;
+  if (scale.read()) newDataReady = true;
+  if (firstPeak && newDataReady) {
+    double i = scale.get_units(4);
+    if (i >= insertionForce ) {
+      insertionForce = i;
+    }
+    else if (insertionForce - i > 100) {
+      insertionForce = insertionForce;
+      firstPeak = 0;
+    }
   }
   return (insertionForce);
 }
 
 double measureRemoval() {
-  double i = scale.get_units(2);
-  //if (scale.wait_ready_retry(10)) {
-    // INSERT SCREEN PRINT HERE???????-------------------------
-  //}
-  if (i >= removalForce ) {
-    removalForce = i;
+  static boolean newDataReady = 0;
+  if (scale.read()) newDataReady = true;
+  if (firstPeak && newDataReady) {
+    double i = scale.get_units(2);
+    if (i >= removalForce ) {
+      removalForce = i;
+    }
+    return (removalForce);
   }
-  return (removalForce);
 }
