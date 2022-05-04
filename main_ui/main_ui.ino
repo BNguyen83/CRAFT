@@ -62,7 +62,7 @@ Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 int   cycleCount;
 float trvSpeed;    // Travel speed
 float trvDistance; // Travel Distance
-int   maxRes;      // Max resistance
+float   maxRes;      // Max resistance
 float maxInForce_LIMIT;  // Insertion force
 float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
@@ -116,7 +116,7 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
-  //if(endFlag != 0){mainState = 9;}
+  if(endFlag != 0){mainState = 9;}
   switch (mainState)
   {
     /********* Main menu *********/
@@ -338,7 +338,8 @@ void loop()
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            maxRes = ms.toInt();
+            maxRes = (float)ms.toInt()/1000.0;
+            Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -499,13 +500,18 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
-            bot.print(maxForce);
+            bot.print((int)maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
-            bot.print(minForce);
+            bot.print((int)minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
+
+            bot.setCursor(24, 0);
+            bot.print("Res. (O): ");
+            bot.setCursor(35, 0);
+            bot.print(res[resSort()]);
           }
           testState = 1;
           if (key == 'D') {
@@ -693,6 +699,7 @@ void loop()
             mainState = 0;
             menuState = 0;
             printFlag = 0;
+            myFile.close();
           } else if (key == 'B') { // go to jog motor
             pauseState = 1;
             printFlag = 0;
@@ -849,6 +856,8 @@ void loop()
         mainState = 0;
         menuState = 0;
         printFlag = 0;
+        endFlag = 0;
+        myFile.close();
       }
       break;
 
@@ -1002,12 +1011,8 @@ void resetIntFlag() {
 }
 
 void testEnd() {
-  if (maxForce > maxInForce_LIMIT) {
-    endFlag = 1;
-  }
-  if (minForce < minRemForce_LIMIT) {
-    endFlag = 2;
-  }
+  //if (maxForce > maxInForce_LIMIT) {endFlag = 1;}
+  //if (minForce < minRemForce_LIMIT) endFlag = 2;}
   for (int rescount = 0; rescount < 20; rescount++) {
     if (res[rescount] > maxRes) {
       endFlag = 3;
@@ -1042,4 +1047,12 @@ void conRead() {
 
   loadCellCalibration = conf.read();
   //Serial.write(loadCellCalibration);
+}
+
+int resSort(){
+  int index = 0;
+  for (int w = 0; w < 20; w++){
+    if(res[w+1] > res[index]) index = w + 1; 
+  }
+  return index;
 }
