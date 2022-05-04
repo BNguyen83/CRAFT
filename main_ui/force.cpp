@@ -15,7 +15,6 @@ boolean firstPeak = 0;
 unsigned long t = 0;
 
 void forceSetup() {
-  delay (300);
   LoadCell.begin();
   unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step

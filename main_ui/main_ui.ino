@@ -505,7 +505,7 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
-            bot.print((int)maxForce);
+            bot.print(maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
@@ -513,8 +513,6 @@ void loop()
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
           }
-          minForce = 0;
-          maxForce = 0;
           testState = 1;
           if (key == 'D') {
             mainState = 6;
@@ -522,6 +520,8 @@ void loop()
             printFlag = 0;
             disableMotor(true);
           }
+          minForce = 0;
+          maxForce = 0;
           break;
 
         //---------------------------------------------------------------------------
@@ -866,7 +866,7 @@ void loop()
       }
       break;
 
-    //  default: break;
+      //  default: break;
 
       //break;
 

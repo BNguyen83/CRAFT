@@ -306,7 +306,7 @@ long HX711_ADC::smoothedData()
 {
 	long data = 0;
 	long L = 0xFFFFFF;
-	long H = 0x00;
+	long H = 0x00; 
 	for (uint8_t r = 0; r < (samplesInUse + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE); r++) 
 	{
 		#if IGN_LOW_SAMPLE

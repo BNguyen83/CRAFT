@@ -81,19 +81,4 @@ void forceCalibration() {
   Serial.println(", use this as calibration value (calFactor) in your project sketch.");
 
   _resume = true;
-
-  Serial.println("End calibration");
-  Serial.println("***");
-  Serial.println("To re-calibrate, send 'r' from serial monitor.");
-  Serial.println("For manual edit of the calibration value, send 'c' from serial monitor.");
-  Serial.println("***");
-  Serial.println("End change calibration value");
-  Serial.println("***");
-  // receive command from serial terminal
-  if (Serial.available() > 0) {
-    char inByte = Serial.read();
-    if (inByte == 't') {
-      Serial.println("exit");
-    }
-  }
 }
