@@ -71,9 +71,9 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
 
-int maxForce = 0;
-int minForce = 0;
-float loadCellCalibration = 78;
+double maxForce = 0;
+double minForce = 0;
+float loadCellCalibration = 871;
 
 /*** State machine flags ***/
 int mainState  = 0; // Main
@@ -117,12 +117,6 @@ void loop()
   // "interupts" Handler
   interruptHand();
   //if(endFlag != 0){mainState = 9;}
-
-  /*
-    insertionForce(&maxforce);
-    Serial.print("Insertion Force (kg): ");
-    Serial.println(maxforce);
-  */
   switch (mainState)
   {
     /********* Main menu *********/
@@ -652,8 +646,8 @@ void loop()
           }
         case 1: // put the stuff you want to do here
           switch (testState) {
-            case 1: measureInsertion(&maxForce); break;
-            case 2: measureRemoval(&minForce); break;
+            case 1: maxForce = measureInsertion(); break;
+            case 2: minForce = measureRemoval(); break;
           }
           if (isRun() != 1) motorState = 2;
 
@@ -906,7 +900,7 @@ void printToSD() {
     myFile.print(" ");
   }
   myFile.print("\t");
-  myFile.print((int)maxForce);
+  myFile.print(maxForce);
   myFile.print(" ");
   myFile.print(minForce);
   myFile.println();
