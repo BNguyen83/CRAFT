@@ -1,10 +1,10 @@
-#ifndef FORCE_h
-#define FORCE_h
+#ifndef force_h
+#define force_h
 
 void resetForceFlag();
+void forceCalibration();
 void forceSetup();
-void measureInsertion(int*);
-void measureRemoval(int*);
-void forceCalibrationSetup();
-float forceCalibration();
+double measureInsertion();
+double measureRemoval();
+
 #endif

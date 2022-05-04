@@ -1,118 +1,82 @@
-#ifndef HX711ADC_H
-#define HX711ADC_H
+#ifndef HX711ADC_h
+#define HX711ADC_h
 
-#include <Arduino.h>
-#include "config.h"
-
-/*
-Note: HX711_ADC configuration values has been moved to file config.h
-*/
-
-#define DATA_SET 	SAMPLES + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE // total samples in memory
-
-#if (SAMPLES  != 1) & (SAMPLES  != 2) & (SAMPLES  != 4) & (SAMPLES  != 8) & (SAMPLES  != 16) & (SAMPLES  != 32) & (SAMPLES  != 64) & (SAMPLES  != 128)
-	#error "number of SAMPLES not valid!"
+#if ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
 #endif
 
-#if (SAMPLES  == 1) & ((IGN_HIGH_SAMPLE  != 0) | (IGN_LOW_SAMPLE  != 0))
-	#error "number of SAMPLES not valid!"
-#endif
+class HX711
+{
+  private:
+    byte PD_SCK;  // Power Down and Serial Clock Input Pin
+    byte DOUT;    // Serial Data Output Pin
+    byte GAIN;    // amplification factor
+    long OFFSET = 0;  // used for tare weight
+    float SCALE = 1;  // used to return weight in grams, kg, ounces, whatever
 
-#if 		(SAMPLES == 1)
-#define 	DIVB 0
-#elif 		(SAMPLES == 2)
-#define 	DIVB 1
-#elif 		(SAMPLES == 4)
-#define 	DIVB 2
-#elif  		(SAMPLES == 8)
-#define 	DIVB 3
-#elif  		(SAMPLES == 16)
-#define 	DIVB 4
-#elif  		(SAMPLES == 32)
-#define 	DIVB 5
-#elif  		(SAMPLES == 64)
-#define 	DIVB 6
-#elif  		(SAMPLES == 128)
-#define 	DIVB 7
-#endif
+  public:
 
-#define SIGNAL_TIMEOUT	100
+    HX711();
 
-class HX711_ADC
-{	
-		
-	public:
-		HX711_ADC(uint8_t dout, uint8_t sck); 		//constructor
-		void setGain(uint8_t gain = 128); 			//value must be 32, 64 or 128*
-		void begin();								//set pinMode, HX711 gain and power up the HX711
-		void begin(uint8_t gain);					//set pinMode, HX711 selected gain and power up the HX711
-		void start(unsigned long t); 					//start HX711 and do tare 
-		void start(unsigned long t, bool dotare);		//start HX711, do tare if selected
-		int startMultiple(unsigned long t); 			//start and do tare, multiple HX711 simultaniously
-		int startMultiple(unsigned long t, bool dotare);	//start and do tare if selected, multiple HX711 simultaniously
-		void tare(); 								//zero the scale, wait for tare to finnish (blocking)
-		void tareNoDelay(); 						//zero the scale, initiate the tare operation to run in the background (non-blocking)
-		bool getTareStatus();						//returns 'true' if tareNoDelay() operation is complete
-		void setCalFactor(float cal); 				//set new calibration factor, raw data is divided by this value to convert to readable data
-		float getCalFactor(); 						//returns the current calibration factor
-		float getData(); 							//returns data from the moving average dataset 
+    virtual ~HX711();
 
-		int getReadIndex(); 						//for testing and debugging
-		float getConversionTime(); 					//for testing and debugging
-		float getSPS();								//for testing and debugging
-		bool getTareTimeoutFlag();					//for testing and debugging
-		void disableTareTimeout();					//for testing and debugging
-		long getSettlingTime();						//for testing and debugging
-		void powerDown(); 							//power down the HX711
-		void powerUp(); 							//power up the HX711
-		long getTareOffset();						//get the tare offset (raw data value output without the scale "calFactor")
-		void setTareOffset(long newoffset);			//set new tare offset (raw data value input without the scale "calFactor")
-		uint8_t update(); 							//if conversion is ready; read out 24 bit data and add to dataset
-		bool dataWaitingAsync(); 					//checks if data is available to read (no conversion yet)
-		bool updateAsync(); 						//read available data and add to dataset 
-		void setSamplesInUse(int samples);			//overide number of samples in use
-		int getSamplesInUse();						//returns current number of samples in use
-		void resetSamplesIndex();					//resets index for dataset
-		bool refreshDataSet();						//Fill the whole dataset up with new conversions, i.e. after a reset/restart (this function is blocking once started)
-		bool getDataSetStatus();					//returns 'true' when the whole dataset has been filled up with conversions, i.e. after a reset/restart
-		float getNewCalibration(float known_mass);	//returns and sets a new calibration value (calFactor) based on a known mass input
-		bool getSignalTimeoutFlag();				//returns 'true' if it takes longer time then 'SIGNAL_TIMEOUT' for the dout pin to go low after a new conversion is started
-		void setReverseOutput();					//reverse the output value
+    // Initialize library with data output pin, clock input pin and gain factor.
+    // Channel selection is made by passing the appropriate gain:
+    // - With a gain factor of 64 or 128, channel A is selected
+    // - With a gain factor of 32, channel B is selected
+    // The library default is "128" (Channel A).
+    void begin(byte dout, byte pd_sck, byte gain = 128);
 
-	protected:
-		void conversion24bit(); 					//if conversion is ready: returns 24 bit data and starts the next conversion
-		long smoothedData();						//returns the smoothed data value calculated from the dataset
-		uint8_t sckPin; 							//HX711 pd_sck pin
-		uint8_t doutPin; 							//HX711 dout pin
-		uint8_t GAIN;								//HX711 GAIN
-		float calFactor = 1.0;						//calibration factor as given in function setCalFactor(float cal)
-		float calFactorRecip = 1.0;					//reciprocal calibration factor (1/calFactor), the HX711 raw data is multiplied by this value
-		volatile long dataSampleSet[DATA_SET + 1];	// dataset, make voltile if interrupt is used 
-		long tareOffset = 0;
-		int readIndex = 0;
-		unsigned long conversionStartTime = 0;
-		unsigned long conversionTime = 0;
-		uint8_t isFirst = 1;
-		uint8_t tareTimes = 0;
-		uint8_t divBit = DIVB;
-		const uint8_t divBitCompiled = DIVB;
-		bool doTare = 0;
-		bool startStatus = 0;
-		unsigned long startMultipleTimeStamp = 0;
-		unsigned long startMultipleWaitTime = 0;
-		uint8_t convRslt = 0;
-		bool tareStatus = 0;
-		unsigned int tareTimeOut = (SAMPLES + IGN_HIGH_SAMPLE + IGN_HIGH_SAMPLE) * 150; // tare timeout time in ms, no of samples * 150ms (10SPS + 50% margin)
-		bool tareTimeoutFlag = 0;
-		bool tareTimeoutDisable = 0;
-		int samplesInUse = SAMPLES;
-		long lastSmoothedData = 0;
-		bool dataOutOfRange = 0;
-		unsigned long lastDoutLowTime = 0;
-		bool signalTimeoutFlag = 0;
-		bool reverseVal = 0;
-		bool dataWaiting = 0;
-};	
+    // Check if HX711 is ready
+    // from the datasheet: When output data is not ready for retrieval, digital output pin DOUT is high. Serial clock
+    // input PD_SCK should be low. When DOUT goes to low, it indicates data is ready for retrieval.
+    bool is_ready();
 
-#endif
-   
+    // Wait for the HX711 to become ready
+    void wait_ready(unsigned long delay_ms = 0);
+    bool wait_ready_retry(int retries = 3, unsigned long delay_ms = 0);
+    bool wait_ready_timeout(unsigned long timeout = 1000, unsigned long delay_ms = 0);
+
+    // set the gain factor; takes effect only after a call to read()
+    // channel A can be set for a 128 or 64 gain; channel B has a fixed 32 gain
+    // depending on the parameter, the channel is also set to either A or B
+    void set_gain(byte gain = 128);
+
+    // waits for the chip to be ready and returns a reading
+    long read();
+
+    // returns an average reading; times = how many times to read
+    long read_average(byte times = 10);
+
+    // returns (read_average() - OFFSET), that is the current value without the tare weight; times = how many readings to do
+    double get_value(byte times = 1);
+
+    // returns get_value() divided by SCALE, that is the raw value divided by a value obtained via calibration
+    // times = how many readings to do
+    float get_units(byte times = 1);
+
+    // set the OFFSET value for tare weight; times = how many times to read the tare value
+    void tare(byte times = 10);
+
+    // set the SCALE value; this value is used to convert the raw data to "human readable" data (measure units)
+    void set_scale(float scale = 1.f);
+
+    // get the current SCALE
+    float get_scale();
+
+    // set OFFSET, the value that's subtracted from the actual reading (tare weight)
+    void set_offset(long offset = 0);
+
+    // get the current OFFSET
+    long get_offset();
+
+    // puts the chip into power down mode
+    void power_down();
+
+    // wakes up the chip after power down mode
+    void power_up();
+};
+
+#endif /* HX711_h */
