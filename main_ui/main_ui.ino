@@ -500,11 +500,11 @@ void loop()
             bot.setCursor(1, 0);
             bot.print("Ins. Force (g): ");
             bot.setCursor(17, 0);
-            bot.print((int)maxForce);
+            bot.print(maxForce);
             bot.setCursor(1, 1);
             bot.print("Rem. Force (g): ");
             bot.setCursor(17, 1);
-            bot.print((int)minForce);
+            bot.print(minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
 
@@ -654,6 +654,7 @@ void loop()
           switch (testState) {
             case 1: maxForce = measureInsertion(); break;
             case 2: minForce = measureRemoval(); break;
+            
           }
           if (isRun() != 1) motorState = 2;
 
