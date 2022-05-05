@@ -35,7 +35,7 @@ void forceSetup() {
 
 void measureInsertion(int* maxForce) {
   static boolean newDataReady = 0;
-  const int settlingTime = 0;
+  const int settlingTime = 300;
   if (LoadCell.update()) newDataReady = 1;
 
   // get smoothed value from the dataset:
