@@ -341,7 +341,7 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             maxRes = (float)ms.toInt() / 1000.0;
-            Serial.println(maxRes);
+            //Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
