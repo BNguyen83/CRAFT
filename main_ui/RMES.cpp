@@ -302,6 +302,6 @@ void measureRMES(float* resArray, int numCh) {
 float VtoR(float voltage, int i) {
   float res = 0;
   res = (RMESrs * (RMESa[i] * voltage + RMESb[i])) / (Vs - RMESa[i] * voltage - RMESb[i]);
-  //Serial.println(voltage);
+  Serial.println(voltage);
   return res;
 }
