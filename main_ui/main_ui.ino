@@ -341,7 +341,7 @@ void loop()
             String ms = String(arr);
             ms.remove(i);
             maxRes = (float)ms.toInt() / 1000.0;
-            Serial.println(maxRes);
+            //Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -541,8 +541,9 @@ void loop()
           break;
         case 2:
           //Serial.println("End of insertion");
-          measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
+          measureRMES(res, 20); // run resistance measurment
+          //delay(dwellTime * 1000);
           resetForceFlag();
           setPosition(trvDistance * -1);
           mainState = 5;
@@ -919,7 +920,8 @@ void printToSD() {
 }
 
 void convertSpeed(float input) {
-  changeTopSpeed(map(input, 5.08, 25.4, 0, 1));
+  changeTopSpeed(map(input, 5.08, 25.4, 0, 10000)/10000.0);
+  //Serial.println(map(input, 5.08, 25.4, 0, 10000)/10000.0);
 }
 
 void interruptHand() {
