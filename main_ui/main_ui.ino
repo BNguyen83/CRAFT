@@ -187,9 +187,9 @@ void loop()
             top.print("Connection Resistance And Force Tester ");
 
             bot.setCursor(1, 0);
-            bot.print("<A> Begin test  <B> Set Origin ");
+            bot.print("<R> Begin test  <Y> Set Origin ");
             //bot.setCursor(1, 1);
-            //bot.print("<C> Set Origin  <D> System defaults");
+            //bot.print("<B> Set Origin  <G> System defaults");
 
           }
           printFlag = 1;
@@ -516,7 +516,7 @@ void loop()
             bot.setCursor(17, 1);
             bot.print(minForce);
             bot.setCursor(30, 1);
-            bot.print("<D> Pause");
+            bot.print("<G> Pause");
 
             top.setCursor(24, 1);
             top.print("Res. (O): ");
@@ -698,6 +698,7 @@ void loop()
       break;
     /******* pause ******/
     case 6:
+    timerFlag = 0;
       switch (pauseState) {
         case 0: // Pause menu
           if (printFlag == 0) {
@@ -708,9 +709,9 @@ void loop()
             bot.setCursor(31, 1);
             bot.print("<*> Back");
             top.setCursor(1, 1);
-            top.print("<A> Stop test");
+            top.print("<R> Stop test");
             bot.setCursor(1, 0);
-            bot.print("<B> Jog Motor");
+            bot.print("<Y> Jog Motor");
             printFlag = 1;
           }
 

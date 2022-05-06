@@ -73,6 +73,7 @@ int   cycleCounter = 0;
 
 float maxForce = 0;
 float minForce = 0;
+
 float loadCellCalibration = 871;
 
 /*** State machine flags ***/
@@ -84,6 +85,8 @@ int motorState = 0; // motor
 int pauseState = 0; // pause
 int endFlag    = 0; // end condition
 int doorFlag   = 0;  // Door
+int timerFlag  = 0; // motor timer
+unsigned long sysTime = 0;
 
 
 char arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -116,6 +119,7 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
+  motorTimer();
   if (endFlag != 0) {
     mainState = 9;
   }
@@ -179,9 +183,9 @@ void loop()
             top.print("Connection Resistance And Force Tester ");
 
             bot.setCursor(1, 0);
-            bot.print("<A> Begin test  <B> Test Cycle ");
-            bot.setCursor(1, 1);
-            bot.print("<C> Set Origin  <D> System defaults");
+            bot.print("<A> Begin test  <B> Set Origin ");
+            //bot.setCursor(1, 1);
+            //bot.print("<C> Set Origin  <D> System defaults");
 
           }
           printFlag = 1;
@@ -195,10 +199,10 @@ void loop()
             menuState++;
             printFlag = 0;
           } else if (key == 'B') {
-            //mainState = 2;
+            mainState = 3;
             printFlag = 0;
           } else if (key == 'C') {
-            mainState = 3;
+            //mainState = 3;
             printFlag = 0;
           } else if (key == 'D') {
             //mainState = 4;
@@ -531,6 +535,7 @@ void loop()
         case 1: // insertion
           resetForceFlag();
           setPosition(0);    // move to closed position
+          timerFlag = 1;     // start timer
           mainState = 5;
           if (key == 'D') {
             mainState = 6;
@@ -546,6 +551,7 @@ void loop()
           //delay(dwellTime * 1000);
           resetForceFlag();
           setPosition(trvDistance * -1);
+          timerFlag = 1;      // start timer
           mainState = 5;
           if (key == 'D') {
             mainState = 6;
@@ -555,6 +561,7 @@ void loop()
           }
           break;
         case 3:
+          timerFlag = 0;
           printToSD();        // print stuff to SD card
           //Serial.println(minForce);
           //Serial.println(maxForce);
@@ -572,6 +579,11 @@ void loop()
             menuState = 0;
             printFlag = 0;
             myFile.close();
+            for (int w = 0; w < 20; w++) {
+              res[w] = 0;
+            }
+            maxForce = 0;
+            minForce = 0;
           }
           testState = 0;
           if (key == 'D') {
@@ -703,6 +715,11 @@ void loop()
             menuState = 0;
             printFlag = 0;
             myFile.close();
+            for (int w = 0; w < 20; w++) {
+              res[w] = 0;
+            }
+            maxForce = 0;
+            minForce = 0;
           } else if (key == 'B') { // go to jog motor
             pauseState = 1;
             printFlag = 0;
@@ -810,6 +827,19 @@ void loop()
           printFlag = 0;
 
           break;
+
+        case 5:
+          disableMotor(true);
+          if (printFlag == 0) {
+            if (printFlag == 0) {
+              top.clear();
+              bot.clear();
+              top.setCursor(2, 1);
+              top.print(" MOTOR STALLED!!!   RESTART TEST");
+              printFlag = 1;
+            }
+          }
+          break;
       }
       break;
     case 9: //end of test
@@ -854,13 +884,17 @@ void loop()
             break;
         }
         myFile.close();
+        for (int w = 0; w < 20; w++) {
+          res[w] = 0;
+        }
+        maxForce = 0;
+        minForce = 0;
       }
       if (key == '#') {
         mainState = 0;
         menuState = 0;
         printFlag = 0;
         endFlag = 0;
-        myFile.close();
       }
       break;
 
@@ -920,12 +954,15 @@ void printToSD() {
 }
 
 void convertSpeed(float input) {
-  changeTopSpeed(map(input, 5.08, 25.4, 0, 10000)/10000.0);
+  changeTopSpeed(map(input, 5.08, 25.4, 0, 10000) / 10000.0);
   //Serial.println(map(input, 5.08, 25.4, 0, 10000)/10000.0);
 }
 
 void interruptHand() {
   // E-stop
+  if (intFlag == 5) {
+    while (1);
+  }
   if (digitalRead(34)) {
     // send to error screen
     intFlag = 1;
@@ -1063,4 +1100,25 @@ int resSort() {
     if (res[w + 1] > res[index]) index = w + 1;
   }
   return index;
+}
+
+void motorTimer() {
+  switch (timerFlag) {
+    case 0: // no movemet
+
+      break;
+    case 1: // start timer
+      sysTime = millis();
+      timerFlag = 2;
+      break;
+    case 2: // check time
+      unsigned long checkTime = millis();
+      if (checkTime - sysTime > 5000) {
+        mainState = 8;
+        intFlag = 5;
+        disableMotor(true);
+        myFile.close();
+      }
+      break;
+  }
 }
