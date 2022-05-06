@@ -9,6 +9,8 @@
 #include "force.h" // Belinda's header
 #include "HX711ADC.h"
 
+
+
 File myFile;
 File conf;
 /***** System Defaults *****/
@@ -67,6 +69,8 @@ float maxInForce_LIMIT;  // Insertion force
 float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
 float dwellTime;
+int radd[] = {0, 0, 0};
+static float radd2 = 0.14;
 
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
@@ -108,7 +112,7 @@ void setup()
   setupInterrupts();
   //attachInterrupt(digitalPinToInterrupt(A9), doorSwitch, FALLING);
 
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   /* Other function initializations go here */
 }
@@ -548,6 +552,9 @@ void loop()
           //Serial.println("End of insertion");
           delay(dwellTime * 1000);
           measureRMES(res, 20); // run resistance measurment
+          for (int n = 0; n < 20; n++) {
+            res[n] = res[n] - radd2;
+          }
           //delay(dwellTime * 1000);
           resetForceFlag();
           setPosition(trvDistance * -1);
@@ -1053,16 +1060,41 @@ void resetIntFlag() {
 
 void testEnd() {
   if (maxForce > maxInForce_LIMIT) {
-    endFlag = 1;
+    radd[0]++;
+    if (radd[0] > 3) {
+      endFlag = 2;
+    }
+
+  }
+  else {
+    radd[0] = 0;
   }
   if (minForce < minRemForce_LIMIT) {
-    endFlag = 2;
+    radd[1]++;
+    if (radd[1] > 3) {
+      endFlag = 1;
+    }
+
+  }
+  else {
+    radd[1] = 0;
   }
   for (int rescount = 0; rescount < 20; rescount++) {
     if (res[rescount] > maxRes) {
-      endFlag = 3;
+      radd[2]++;
+      Serial.println(radd[2]);
+      break;
+    }
+    else {
+      radd[2] = 0;
     }
   }
+  if (radd[2] > 3) {
+    endFlag = 3;
+  }
+
+
+
   if (cycleCounter > cycleCount) {
     endFlag = 4;
   }
@@ -1113,7 +1145,7 @@ void motorTimer() {
       break;
     case 2: // check time
       unsigned long checkTime = millis();
-      if (checkTime - sysTime > 5000) {
+      if (checkTime - sysTime > 3000) {
         mainState = 8;
         intFlag = 5;
         disableMotor(true);
