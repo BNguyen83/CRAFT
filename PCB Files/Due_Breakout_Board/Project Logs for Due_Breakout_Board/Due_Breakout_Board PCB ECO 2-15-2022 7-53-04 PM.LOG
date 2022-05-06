@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=NetJ4_1 Pin=R410-2
+Added Pin To Net: NetName=NetJ7_64 Pin=R410-2
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

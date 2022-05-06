@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [Due_Breakout_Board.PcbDoc]
+   Generated File[Due_Breakout_Board.TXT]
+   Generated File[Due_Breakout_Board.LDP]
+   Generated File[Due_Breakout_Board.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 8:49:40 PM On 2/22/2022

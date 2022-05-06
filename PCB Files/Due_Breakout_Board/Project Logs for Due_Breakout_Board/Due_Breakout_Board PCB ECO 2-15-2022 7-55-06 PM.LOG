@@ -1,0 +1,11 @@
+Added Pin To Net: NetName=NetJ4_7 Pin=J4-7
+Added Pin To Net: NetName=NetJ4_7 Pin=J7-63
+Added Pin To Net: NetName=NetJ4_7 Pin=R409-2
+Added Net: Name=NetJ4_7
+Added Pin To Net: NetName=NetJ4_8 Pin=J4-8
+Added Pin To Net: NetName=NetJ4_8 Pin=J7-64
+Added Pin To Net: NetName=NetJ4_8 Pin=R410-2
+Added Net: Name=NetJ4_8
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

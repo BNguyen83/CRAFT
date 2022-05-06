@@ -1,0 +1,13 @@
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component C3 Cap Pol1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component C4 Cap Pol1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component J1 TSW-104-08-T-D
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component J2 TSW-102-23-T-D
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R2 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R3 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R4 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R5 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R6 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component R7 Res1
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component RV2 PV36W103C01B00
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component U1 AD622ANZ
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJefferson

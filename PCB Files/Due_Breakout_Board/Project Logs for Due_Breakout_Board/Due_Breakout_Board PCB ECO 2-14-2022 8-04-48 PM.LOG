@@ -1,0 +1,252 @@
+Added Component: Designator=J1(TE_1761681-7)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-7"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=J2(TE_1761681-7)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-7"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=J3(TE_1761681-7)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-7"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=J4(TE_1761681-7)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-7"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=J5(TE_1761681-1)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "{'manufacturer': 'TE Connectivity'}"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=J5(TE_1776118-3)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Centerline_Pitch"; Value = "5 mm[.197 in]"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Comment_1"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "EU_RoHS_Compliance"; Value = "Compliant with Exemptions"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "TE Connectivity"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1776118-3"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number_of_Positions"; Value = "3"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/1776118-3/TE%20Connectivity%20AMP%20Connectors/view-part/2375684/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "TE_purchase_URL"; Value = "https://www.te.com/usa-en/product-1776118-3.html?te_bu=Cor&te_type=disp&te_campaign=seda_glo_cor-seda-global-disp-prtnr-fy19-seda-model-bom-cta_sma-317_1&elqCampaignId=32493"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=+3.3V Pin=J5-1
+Added Net: Name=+3.3V
+Added Pin To Net: NetName=+5V Pin=J5-2
+Added Net: Name=+5V
+Added Pin To Net: NetName=GND Pin=J5-3
+Added Net: Name=GND
+Added Pin To Net: NetName=NetJ1_0 Pin=J1-0
+Added Net: Name=NetJ1_0
+Added Pin To Net: NetName=NetJ1_1 Pin=J1-1
+Added Pin To Net: NetName=NetJ1_1 Pin=J1-2
+Added Net: Name=NetJ1_1
+Added Pin To Net: NetName=NetJ1_2 Pin=J1-2
+Added Net: Name=NetJ1_2
+Added Pin To Net: NetName=NetJ1_3.3V Pin=J1-3.3V
+Added Net: Name=NetJ1_3.3V
+Added Pin To Net: NetName=NetJ1_3 Pin=J1-3
+Added Net: Name=NetJ1_3
+Added Pin To Net: NetName=NetJ1_4 Pin=J1-4
+Added Net: Name=NetJ1_4
+Added Pin To Net: NetName=NetJ1_5 Pin=J1-5
+Added Net: Name=NetJ1_5
+Added Pin To Net: NetName=NetJ1_5V Pin=J1-5V
+Added Pin To Net: NetName=NetJ1_5V Pin=J1-5V
+Added Pin To Net: NetName=NetJ1_5V Pin=J1-5V
+Added Net: Name=NetJ1_5V
+Added Pin To Net: NetName=NetJ1_6 Pin=J1-6
+Added Net: Name=NetJ1_6
+Added Pin To Net: NetName=NetJ1_7 Pin=J1-7
+Added Net: Name=NetJ1_7
+Added Pin To Net: NetName=NetJ1_8 Pin=J1-8
+Added Net: Name=NetJ1_8
+Added Pin To Net: NetName=NetJ1_9 Pin=J1-9
+Added Net: Name=NetJ1_9
+Added Pin To Net: NetName=NetJ1_10 Pin=J1-10
+Added Net: Name=NetJ1_10
+Added Pin To Net: NetName=NetJ1_11 Pin=J1-11
+Added Net: Name=NetJ1_11
+Added Pin To Net: NetName=NetJ1_12 Pin=J1-12
+Added Net: Name=NetJ1_12
+Added Pin To Net: NetName=NetJ1_13 Pin=J1-13
+Added Net: Name=NetJ1_13
+Added Pin To Net: NetName=NetJ1_14 Pin=J1-14
+Added Net: Name=NetJ1_14
+Added Pin To Net: NetName=NetJ1_15 Pin=J1-15
+Added Net: Name=NetJ1_15
+Added Pin To Net: NetName=NetJ1_16 Pin=J1-16
+Added Net: Name=NetJ1_16
+Added Pin To Net: NetName=NetJ1_17 Pin=J1-17
+Added Net: Name=NetJ1_17
+Added Pin To Net: NetName=NetJ1_18 Pin=J1-18
+Added Net: Name=NetJ1_18
+Added Pin To Net: NetName=NetJ1_19 Pin=J1-19
+Added Pin To Net: NetName=NetJ1_19 Pin=J1-20
+Added Net: Name=NetJ1_19
+Added Pin To Net: NetName=NetJ1_20 Pin=J1-20
+Added Net: Name=NetJ1_20
+Added Pin To Net: NetName=NetJ1_21 Pin=J1-21
+Added Net: Name=NetJ1_21
+Added Pin To Net: NetName=NetJ1_22 Pin=J1-22
+Added Net: Name=NetJ1_22
+Added Pin To Net: NetName=NetJ1_23 Pin=J1-23
+Added Net: Name=NetJ1_23
+Added Pin To Net: NetName=NetJ1_24 Pin=J1-24
+Added Net: Name=NetJ1_24
+Added Pin To Net: NetName=NetJ1_25 Pin=J1-25
+Added Net: Name=NetJ1_25
+Added Pin To Net: NetName=NetJ1_26 Pin=J1-26
+Added Net: Name=NetJ1_26
+Added Pin To Net: NetName=NetJ1_27 Pin=J1-27
+Added Net: Name=NetJ1_27
+Added Pin To Net: NetName=NetJ1_28 Pin=J1-28
+Added Net: Name=NetJ1_28
+Added Pin To Net: NetName=NetJ1_29 Pin=J1-29
+Added Net: Name=NetJ1_29
+Added Pin To Net: NetName=NetJ1_30 Pin=J1-30
+Added Net: Name=NetJ1_30
+Added Pin To Net: NetName=NetJ1_31 Pin=J1-31
+Added Net: Name=NetJ1_31
+Added Pin To Net: NetName=NetJ1_32 Pin=J1-32
+Added Net: Name=NetJ1_32
+Added Pin To Net: NetName=NetJ1_33 Pin=J1-33
+Added Net: Name=NetJ1_33
+Added Pin To Net: NetName=NetJ1_34 Pin=J1-34
+Added Net: Name=NetJ1_34
+Added Pin To Net: NetName=NetJ1_35 Pin=J1-35
+Added Net: Name=NetJ1_35
+Added Pin To Net: NetName=NetJ1_36 Pin=J1-36
+Added Net: Name=NetJ1_36
+Added Pin To Net: NetName=NetJ1_37 Pin=J1-37
+Added Net: Name=NetJ1_37
+Added Pin To Net: NetName=NetJ1_38 Pin=J1-38
+Added Net: Name=NetJ1_38
+Added Pin To Net: NetName=NetJ1_39 Pin=J1-39
+Added Net: Name=NetJ1_39
+Added Pin To Net: NetName=NetJ1_40 Pin=J1-40
+Added Net: Name=NetJ1_40
+Added Pin To Net: NetName=NetJ1_41 Pin=J1-41
+Added Net: Name=NetJ1_41
+Added Pin To Net: NetName=NetJ1_42 Pin=J1-42
+Added Net: Name=NetJ1_42
+Added Pin To Net: NetName=NetJ1_43 Pin=J1-43
+Added Net: Name=NetJ1_43
+Added Pin To Net: NetName=NetJ1_44 Pin=J1-44
+Added Net: Name=NetJ1_44
+Added Pin To Net: NetName=NetJ1_45 Pin=J1-45
+Added Net: Name=NetJ1_45
+Added Pin To Net: NetName=NetJ1_46 Pin=J1-46
+Added Net: Name=NetJ1_46
+Added Pin To Net: NetName=NetJ1_47 Pin=J1-47
+Added Net: Name=NetJ1_47
+Added Pin To Net: NetName=NetJ1_48 Pin=J1-48
+Added Pin To Net: NetName=NetJ1_48 Pin=J1-48
+Added Net: Name=NetJ1_48
+Added Pin To Net: NetName=NetJ1_49 Pin=J1-49
+Added Pin To Net: NetName=NetJ1_49 Pin=J1-49
+Added Net: Name=NetJ1_49
+Added Pin To Net: NetName=NetJ1_50 Pin=J1-50
+Added Net: Name=NetJ1_50
+Added Pin To Net: NetName=NetJ1_51 Pin=J1-51
+Added Net: Name=NetJ1_51
+Added Pin To Net: NetName=NetJ1_52 Pin=J1-52
+Added Net: Name=NetJ1_52
+Added Pin To Net: NetName=NetJ1_53 Pin=J1-53
+Added Net: Name=NetJ1_53
+Added Pin To Net: NetName=NetJ1_54 Pin=J1-54
+Added Net: Name=NetJ1_54
+Added Pin To Net: NetName=NetJ1_55 Pin=J1-55
+Added Net: Name=NetJ1_55
+Added Pin To Net: NetName=NetJ1_56 Pin=J1-56
+Added Net: Name=NetJ1_56
+Added Pin To Net: NetName=NetJ1_57 Pin=J1-57
+Added Net: Name=NetJ1_57
+Added Pin To Net: NetName=NetJ1_58 Pin=J1-58
+Added Net: Name=NetJ1_58
+Added Pin To Net: NetName=NetJ1_59 Pin=J1-59
+Added Net: Name=NetJ1_59
+Added Pin To Net: NetName=NetJ1_60 Pin=J1-60
+Added Net: Name=NetJ1_60
+Added Pin To Net: NetName=NetJ1_61 Pin=J1-61
+Added Net: Name=NetJ1_61
+Added Pin To Net: NetName=NetJ1_62 Pin=J1-62
+Added Net: Name=NetJ1_62
+Added Pin To Net: NetName=NetJ1_63 Pin=J1-63
+Added Net: Name=NetJ1_63
+Added Pin To Net: NetName=NetJ1_64 Pin=J1-64
+Added Net: Name=NetJ1_64
+Added Pin To Net: NetName=NetJ1_65 Pin=J1-65
+Added Net: Name=NetJ1_65
+Added Pin To Net: NetName=NetJ1_66 Pin=J1-66
+Added Net: Name=NetJ1_66
+Added Pin To Net: NetName=NetJ1_67 Pin=J1-67
+Added Net: Name=NetJ1_67
+Added Pin To Net: NetName=NetJ1_68 Pin=J1-68
+Added Net: Name=NetJ1_68
+Added Pin To Net: NetName=NetJ1_69 Pin=J1-69
+Added Net: Name=NetJ1_69
+Added Pin To Net: NetName=NetJ1_AREF Pin=J1-AREF
+Added Net: Name=NetJ1_AREF
+Added Pin To Net: NetName=NetJ1_GND Pin=J1-GND
+Added Pin To Net: NetName=NetJ1_GND Pin=J1-GND
+Added Pin To Net: NetName=NetJ1_GND Pin=J1-GND
+Added Pin To Net: NetName=NetJ1_GND Pin=J1-GND
+Added Pin To Net: NetName=NetJ1_GND Pin=J1-GND
+Added Net: Name=NetJ1_GND
+Added Pin To Net: NetName=NetJ1_IOREF Pin=J1-IOREF
+Added Net: Name=NetJ1_IOREF
+Added Pin To Net: NetName=NetJ1_RESET Pin=J1-RESET
+Added Net: Name=NetJ1_RESET
+Added Pin To Net: NetName=NetJ2_1 Pin=J2-1
+Added Pin To Net: NetName=NetJ2_1 Pin=J2-2
+Added Net: Name=NetJ2_1
+Added Pin To Net: NetName=NetJ2_3 Pin=J2-3
+Added Pin To Net: NetName=NetJ2_3 Pin=J2-4
+Added Net: Name=NetJ2_3
+Added Pin To Net: NetName=NetJ2_17 Pin=J2-17
+Added Pin To Net: NetName=NetJ2_17 Pin=J2-18
+Added Pin To Net: NetName=NetJ2_17 Pin=J2-19
+Added Pin To Net: NetName=NetJ2_17 Pin=J2-20
+Added Net: Name=NetJ2_17
+Added Pin To Net: NetName=NetJ3_1 Pin=J3-1
+Added Pin To Net: NetName=NetJ3_1 Pin=J3-2
+Added Net: Name=NetJ3_1
+Added Pin To Net: NetName=NetJ3_19 Pin=J3-19
+Added Pin To Net: NetName=NetJ3_19 Pin=J3-20
+Added Net: Name=NetJ3_19
+Added Pin To Net: NetName=NetJ4_18 Pin=J4-18
+Added Pin To Net: NetName=NetJ4_18 Pin=J4-19
+Added Pin To Net: NetName=NetJ4_18 Pin=J4-20
+Added Net: Name=NetJ4_18
+Added Pin To Net: NetName=NetJ5_1 Pin=J5-1
+Added Pin To Net: NetName=NetJ5_1 Pin=J5-2
+Added Net: Name=NetJ5_1
+Added Pin To Net: NetName=NetJ5_5 Pin=J5-5
+Added Pin To Net: NetName=NetJ5_5 Pin=J5-6
+Added Net: Name=NetJ5_5
+Added Class: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers

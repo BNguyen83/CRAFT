@@ -1,0 +1,4 @@
+Added Component: Designator=J1(DUE_BREAKOUT)
+Add component. Clean all parameters for all variants
+Added Member To Class: ClassName=Due_Breakout_Board Member=Component J1 Arduino Due Breakout
+Added Room: Name=Due_Breakout_Board

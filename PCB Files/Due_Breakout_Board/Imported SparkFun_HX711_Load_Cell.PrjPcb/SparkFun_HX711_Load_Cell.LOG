@@ -1,0 +1,25 @@
+Importer Log Report
+Project : SparkFun_HX711_Load_Cell.PrjPcb
+
+Section : Analyze Document - C:\Users\Andrew\Desktop\Senior Design\Due_Breakout_Board\SparkFun_HX711_Load_Cell.brd
+    Analyzing data of C:\Users\Andrew\Desktop\Senior Design\Due_Breakout_Board\SparkFun_HX711_Load_Cell.brd
+    Load settings
+    Load layers 143
+    Load Library "SparkFun-Connectors"
+    Load Packages 2
+    Load Library "SparkFun-Aesthetics"
+    Load Packages 6
+    Load Library "SparkFun-Capacitors"
+    Load Packages 2
+    Load Library "SparkFun-Resistors"
+    Load Packages 1
+    Load Library "SparkFun-Electromechanical"
+    Load Packages 1
+    Load Library "SparkFun-DiscreteSemi"
+    Load Packages 1
+    Load Library "SparkFun-Passives"
+    Load Packages 2
+    Load Library "Testing"
+    Load Packages 1
+    ERROR: Unhandled typeerrors
+EndSection

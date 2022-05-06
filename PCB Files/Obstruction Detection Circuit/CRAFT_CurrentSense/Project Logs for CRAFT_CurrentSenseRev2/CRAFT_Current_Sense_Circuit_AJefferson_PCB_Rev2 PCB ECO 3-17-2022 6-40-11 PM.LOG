@@ -1,0 +1,39 @@
+Removed Pin From Net: NetName=GND Pin=C305-N
+Removed Pin From Net: NetName=+3.3V Pin=C305-P
+Removed Pin From Net: NetName=E_Stop Pin=J304-3
+Removed Pin From Net: NetName=GND Pin=R311-1
+Removed Pin From Net: NetName=GND Pin=R313-1
+Removed Pin From Net: NetName=Power_State Pin=R314-2
+Removed Pin From Net: NetName=+3.3V Pin=R315-2
+Removed Pin From Net: NetName=E_Stop Pin=R316-2
+Removed Pin From Net: NetName=GND Pin=U303-4
+Removed Pin From Net: NetName=+3.3V Pin=U303-8
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=C305
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=R311
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=R313
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=R314
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=R315
+Removed Member From Class: ClassName=CRAFT_E_Stop_AJeffersonRev2 Member=R316
+Change Component Footprint: Designator=U303 Old Footprint=DIP787W46P254L927H533Q8 New Footprint=SOT95P280X140-5N
+Change Component Comment : Designator=U303 Old Comment=MCP6002-E/P New Comment=74AHC1G08W5-7
+Change component parameters: Designator = "U303"; Footprint = "SOT95P280X140-5N"; UniqueID = "\XOSPGDVY"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Arrow_Europe-Purchase-URL"; Value = "https://snapeda.com/shop?store=Arrow+Europe&id=359675"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Availability"; Value = "Warning"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/74AHC1G08W5-7/Diodes%20Inc./view-part/359675/?ref=eda"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "MF"; Value = "Diodes Inc."; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "MP"; Value = "74AHC1G08W5-7"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "SOT-753 Diodes Inc."; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/74AHC1G08W5-7/Diodes%20Inc./view-part/359675/?ref=snap"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=E_Stop Pin=U303-1
+Added Pin To Net: NetName=GND Pin=U303-3
+Added Pin To Net: NetName=Power_State Pin=U303-4
+Added Pin To Net: NetName=+3.3V Pin=U303-5
+Added Pin To Net: NetName=NetJ304_3 Pin=J304-3
+Added Pin To Net: NetName=NetJ304_3 Pin=U303-2
+Added Net: Name=NetJ304_3
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJeffersonRev2
+Added Room: Name=CRAFT_E_Stop_AJeffersonRev2
+Added Room: Name=CRAFT_Negativesupply

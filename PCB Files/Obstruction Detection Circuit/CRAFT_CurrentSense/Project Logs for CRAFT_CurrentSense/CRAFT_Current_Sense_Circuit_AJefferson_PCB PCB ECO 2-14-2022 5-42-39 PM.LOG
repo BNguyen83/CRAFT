@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=+3.3V Pin=J4-1
+Added Pin To Net: NetName=+5V Pin=J4-2
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJefferson
+Added Room: Name=CRAFT_E_Stop_AJefferson

@@ -1,0 +1,7 @@
+Removed Pin From Net: NetName=+3.3V Pin=J7-3.3V
+Removed Pin From Net: NetName=+5V Pin=J7-5V
+Removed Pin From Net: NetName=+5V Pin=J7-5V
+Removed Pin From Net: NetName=+5V Pin=J7-5V
+Added Pin To Net: NetName=+5V Pin=J7-VIN
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers

@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=NetJ407_32 Pin=U402-DAT
+Removed Pin From Net: NetName=NetJ405_6 Pin=U402-SHEILD
+Removed Pin From Net: NetName=+3.3V Pin=U402-VDD
+Change Component DesignItemId : Designator=U402 Old DesignItemId=HX711 New DesignItemId=HX711_MOD
+Change Component Footprint: Designator=U402 Old Footprint=HX711_BREAKOUT New Footprint=HX711_MOD
+Change Component Comment : Designator=U402 Old Comment=HX711 New Comment=*
+Added Pin To Net: NetName=NetJ407_32 Pin=U402-DT
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

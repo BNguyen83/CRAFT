@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=NetC301_1 Pin=C301-1
+Removed Pin From Net: NetName=GND Pin=C301-2
+Removed Pin From Net: NetName=Vsig_out Pin=C302-1
+Removed Pin From Net: NetName=GND Pin=C302-2
+Removed Pin From Net: NetName=+5V Pin=C303-1
+Removed Pin From Net: NetName=GND Pin=C303-2
+Removed Pin From Net: NetName=+3.3V Pin=C304-1
+Removed Pin From Net: NetName=GND Pin=C304-2
+Removed Pin From Net: NetName=+3.3V Pin=C305-1
+Removed Pin From Net: NetName=GND Pin=C305-2
+Change Component Footprint: Designator=C301 Old Footprint=CAPPRD750W80D1600H2700 New Footprint=CAPPRD250W50D630H1120
+Change Component Footprint: Designator=C302 Old Footprint=CAPPRD750W80D1600H2700 New Footprint=CAPPRD250W50D630H1120
+Change Component Footprint: Designator=C303 Old Footprint=CAPPRD750W80D1600H2700 New Footprint=CAPPRD250W50D630H1120
+Change Component Footprint: Designator=C304 Old Footprint=CAPPRD750W80D1600H2700 New Footprint=CAPPRD250W50D630H1120
+Change Component Footprint: Designator=C305 Old Footprint=CAPPRD750W80D1600H2700 New Footprint=CAPPRD250W50D630H1120
+Added Pin To Net: NetName=GND Pin=C301-N
+Added Pin To Net: NetName=GND Pin=C302-N
+Added Pin To Net: NetName=GND Pin=C303-N
+Added Pin To Net: NetName=GND Pin=C304-N
+Added Pin To Net: NetName=GND Pin=C305-N

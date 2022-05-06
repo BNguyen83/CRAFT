@@ -1,0 +1,17 @@
+Added Component: Designator=J4(TE_1761681-1)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "{'manufacturer': 'TE Connectivity'}"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "1761681-1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=Comp_Sig_OUT Pin=J4-4
+Added Pin To Net: NetName=Power_State Pin=J4-5
+Added Pin To Net: NetName=GND Pin=J4-6
+Added Pin To Net: NetName=VCC Pin=J4-1
+Added Pin To Net: NetName=VCC Pin=J4-2
+Added Net: Name=VCC
+Added Member To Class: ClassName=CRAFT_Current_Sense_Circuit_AJefferson Member=Component J4 1761681-1
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJefferson
+Added Room: Name=CRAFT_E_Stop_AJefferson
