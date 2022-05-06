@@ -307,7 +307,7 @@ long HX711_ADC::smoothedData()
   long data = 0;
   long L = 0xFFFFFF;
   long H = 0x00;
-  for (uint8_t r = 0; r < 1; r++) 
+  for (uint8_t r = 0; r < (samplesInUse + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE); r++) 
   {
     #if IGN_LOW_SAMPLE
     if (L > dataSampleSet[r]) L = dataSampleSet[r]; // find lowest value
@@ -486,7 +486,7 @@ void HX711_ADC::setSamplesInUse(int samples)
     //replace the value of all samples in use with the last conversion value
     if(samplesInUse != old_value) 
     {
-      for (uint8_t r = 0; r < 1; r++) 
+      for (uint8_t r = 0; r < samplesInUse + IGN_HIGH_SAMPLE + IGN_LOW_SAMPLE; r++) 
       {
         dataSampleSet[r] = lastSmoothedData;
       }

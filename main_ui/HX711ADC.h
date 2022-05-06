@@ -123,4 +123,3 @@ class HX711_ADC
 };  
 
 #endif
-   

@@ -2,9 +2,9 @@
 #define force_h
 
 void resetForceFlag();
-void forceCalibration();
+float forceCalibration();
 void forceSetup();
-double measureInsertion();
-double measureRemoval();
+float measureInsertion();
+float measureRemoval();
 
 #endif

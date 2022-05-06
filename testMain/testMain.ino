@@ -62,7 +62,7 @@ Keypad myKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 int   cycleCount;
 float trvSpeed;    // Travel speed
 float trvDistance; // Travel Distance
-int   maxRes;      // Max resistance
+float maxRes;      // Max resistance
 float maxInForce_LIMIT;  // Insertion force
 float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
@@ -71,8 +71,8 @@ float dwellTime;
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
 
-double maxForce = 0;
-double minForce = 0;
+float maxForce = 0;
+float minForce = 0;
 float loadCellCalibration = 871;
 
 /*** State machine flags ***/
@@ -116,7 +116,9 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
-  //if(endFlag != 0){mainState = 9;}
+  if (endFlag != 0) {
+    mainState = 9;
+  }
   switch (mainState)
   {
     /********* Main menu *********/
@@ -338,7 +340,8 @@ void loop()
           if (key == '#') {
             String ms = String(arr);
             ms.remove(i);
-            maxRes = ms.toInt();
+            maxRes = (float)ms.toInt() / 1000.0;
+            //Serial.println(maxRes);
             menuState++;
             i = 0;
             printFlag = 0;
@@ -506,6 +509,11 @@ void loop()
             bot.print(minForce);
             bot.setCursor(30, 1);
             bot.print("<D> Pause");
+
+            top.setCursor(24, 1);
+            top.print("Res. (O): ");
+            top.setCursor(35, 1);
+            top.print(res[resSort()]);
           }
           testState = 1;
           if (key == 'D') {
@@ -533,8 +541,9 @@ void loop()
           break;
         case 2:
           //Serial.println("End of insertion");
-          measureRMES(res, 20); // run resistance measurment
           delay(dwellTime * 1000);
+          measureRMES(res, 20); // run resistance measurment
+          //delay(dwellTime * 1000);
           resetForceFlag();
           setPosition(trvDistance * -1);
           mainState = 5;
@@ -552,7 +561,7 @@ void loop()
           cycleCounter++;
           testEnd();
           //endFlag = 4;
-          for(int w = 0; w < 20; w++){
+          for (int w = 0; w < 20; w++) {
             Serial.print(res[w]);
             Serial.print(" ");
           }
@@ -693,6 +702,7 @@ void loop()
             mainState = 0;
             menuState = 0;
             printFlag = 0;
+            myFile.close();
           } else if (key == 'B') { // go to jog motor
             pauseState = 1;
             printFlag = 0;
@@ -849,6 +859,8 @@ void loop()
         mainState = 0;
         menuState = 0;
         printFlag = 0;
+        endFlag = 0;
+        myFile.close();
       }
       break;
 
@@ -908,7 +920,8 @@ void printToSD() {
 }
 
 void convertSpeed(float input) {
-  changeTopSpeed(map(input, 5.08, 25.4, 0, 1));
+  changeTopSpeed(map(input, 5.08, 25.4, 0, 10000)/10000.0);
+  //Serial.println(map(input, 5.08, 25.4, 0, 10000)/10000.0);
 }
 
 void interruptHand() {
@@ -1042,4 +1055,12 @@ void conRead() {
 
   loadCellCalibration = conf.read();
   //Serial.write(loadCellCalibration);
+}
+
+int resSort() {
+  int index = 0;
+  for (int w = 0; w < 20; w++) {
+    if (res[w + 1] > res[index]) index = w + 1;
+  }
+  return index;
 }
