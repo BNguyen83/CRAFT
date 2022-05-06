@@ -70,7 +70,7 @@ float minRemForce_LIMIT; // Removal force
 float maxInSpeed;  // Insertion speed
 float dwellTime;
 int radd[] = {0, 0, 0};
-static float radd2 = 0.14;
+static float radd2 = 0.18;
 
 float res[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0, 0, 0, 0};
 int   cycleCounter = 0;
