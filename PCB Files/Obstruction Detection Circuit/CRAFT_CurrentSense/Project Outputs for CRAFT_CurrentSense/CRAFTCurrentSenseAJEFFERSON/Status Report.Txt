@@ -1,0 +1,32 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 6:05:50 PM On 2/23/2022
+
+Output: Gerber X2 Files
+Type  : GerberX2
+From  : PCB Document [CRAFT_Current_Sense_Circuit_AJefferson_PCB.PcbDoc]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Copper_Signal_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Copper_Signal_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Pads_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Pads_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Paste_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Paste_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Legend_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Soldermask_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Legend_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Soldermask_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Keep-out.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Profile.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_NPTH_Drill.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_PTH_Drill.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Drawing_1.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Drillmap_1.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB.RUL]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB.EXTREP]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB.REP]
+
+
+Files Generated   : 19
+Documents Printed : 0
+
+Finished Output Generation At 6:05:54 PM On 2/23/2022

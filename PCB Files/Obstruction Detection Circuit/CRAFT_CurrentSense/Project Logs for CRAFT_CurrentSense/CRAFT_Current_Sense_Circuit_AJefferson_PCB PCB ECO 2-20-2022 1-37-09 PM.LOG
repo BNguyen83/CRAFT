@@ -1,0 +1,7 @@
+Added Pin To Net: NetName=NetC301_1 Pin=C301-P
+Added Pin To Net: NetName=Vsig_out Pin=C302-P
+Added Pin To Net: NetName=+5V Pin=C303-P
+Added Pin To Net: NetName=+3.3V Pin=C304-P
+Added Pin To Net: NetName=+3.3V Pin=C305-P
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default

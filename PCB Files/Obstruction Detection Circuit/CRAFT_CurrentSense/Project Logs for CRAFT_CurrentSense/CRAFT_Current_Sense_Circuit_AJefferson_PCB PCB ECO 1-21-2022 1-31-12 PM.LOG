@@ -1,0 +1,5 @@
+Change Net Name : Old Net Name=NetJ2_02 New Net Name=Current_A
+Change Net Name : Old Net Name=NetJ2_04 New Net Name=Current_B
+Change Net Name : Old Net Name=NetRV3_2 New Net Name=Comp_Ref
+Change Net Name : Old Net Name=NetU2_1 New Net Name=Comp_Sig_OUT
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJefferson

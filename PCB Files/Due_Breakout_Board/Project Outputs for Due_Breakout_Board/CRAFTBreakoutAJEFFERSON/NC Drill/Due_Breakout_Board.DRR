@@ -1,0 +1,24 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Due_Breakout_Board.PcbDoc   2/22/2022  8:49:39 PM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Due_Breakout_Board.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      28mil (0.711mm)                                           Round             4         PTH        0.66inch (16.70mm)
+T2      30mil (0.75mm)                                            Round             4         PTH        3.36inch (85.24mm)
+T3      33mil (0.85mm)                                            Round             38        PTH        13.38inch (339.92mm)
+T4      35mil (0.9mm)                                             Round             3         PTH        0.20inch (5.00mm)
+T5      39mil (1mm)                                               Round             3         PTH        0.20inch (5.00mm)
+T6      40mil (1.016mm)                                           Round             96        PTH        14.56inch (369.80mm)
+T7      40mil (1.02mm)                                            Round             78        PTH        16.10inch (409.00mm)
+T8      41mil (1.04mm)                                            Round             9         PTH        1.22inch (30.97mm)
+T9      53mil (1.35mm)                                            Round             5         PTH        0.57inch (14.55mm)
+T10     120mil (3.05mm)                                           Round             2         PTH        0.98inch (24.99mm)
+T11     200mil (5.08mm)                                           Round             4         PTH        14.50inch (368.30mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              246
+
+Total Processing Time (hh:mm:ss) : 00:00:01

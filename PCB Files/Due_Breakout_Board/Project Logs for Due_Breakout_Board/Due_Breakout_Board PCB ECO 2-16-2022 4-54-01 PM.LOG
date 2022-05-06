@@ -1,0 +1,89 @@
+Removed Pin From Net: NetName=+3.3V Pin=J1-1
+Removed Pin From Net: NetName=+3.3V Pin=J1-2
+Removed Pin From Net: NetName=GND Pin=J1-20
+Change Component Designator: OldDesignator=J1 NewDesignator=J401
+Change Component Designator: OldDesignator=J2 NewDesignator=J402
+Change Component Designator: OldDesignator=J3 NewDesignator=J403
+Change Component Designator: OldDesignator=J4 NewDesignator=J404
+Change Component Designator: OldDesignator=J5 NewDesignator=J405
+Change Component Designator: OldDesignator=J6 NewDesignator=J406
+Change Component Designator: OldDesignator=J8 NewDesignator=J408
+Change Component Designator: OldDesignator=J9 NewDesignator=J409
+Change Component Designator: OldDesignator=U1 NewDesignator=U401
+Change Component Designator: OldDesignator=U2 NewDesignator=U402
+Added Pin To Net: NetName=GND Pin=J401-11
+Added Pin To Net: NetName=+3.3V Pin=J401-12
+Added Pin To Net: NetName=GND Pin=J401-13
+Added Pin To Net: NetName=+3.3V Pin=J401-14
+Added Pin To Net: NetName=GND Pin=J401-15
+Added Pin To Net: NetName=GND Pin=J401-17
+Change Net Name : Old Net Name=NetJ2_3 New Net Name=NetJ402_3
+Change Net Name : Old Net Name=NetJ2_4 New Net Name=NetJ402_4
+Change Net Name : Old Net Name=NetJ2_5 New Net Name=NetJ402_5
+Change Net Name : Old Net Name=NetJ3_3 New Net Name=NetJ7_41
+Change Net Name : Old Net Name=NetJ3_4 New Net Name=NetJ7_42
+Change Net Name : Old Net Name=NetJ3_5 New Net Name=NetJ7_43
+Change Net Name : Old Net Name=NetJ3_6 New Net Name=NetJ7_44
+Change Net Name : Old Net Name=NetJ3_7 New Net Name=NetJ7_45
+Change Net Name : Old Net Name=NetJ3_8 New Net Name=NetJ7_46
+Change Net Name : Old Net Name=NetJ3_9 New Net Name=NetJ7_47
+Change Net Name : Old Net Name=NetJ3_10 New Net Name=NetJ7_48
+Change Net Name : Old Net Name=NetJ3_11 New Net Name=NetJ7_49
+Change Net Name : Old Net Name=NetJ3_12 New Net Name=NetJ7_50
+Change Net Name : Old Net Name=NetJ3_13 New Net Name=NetJ7_51
+Change Net Name : Old Net Name=NetJ3_14 New Net Name=NetJ7_52
+Change Net Name : Old Net Name=NetJ3_17 New Net Name=NetJ403_17
+Change Net Name : Old Net Name=NetJ4_1 New Net Name=NetJ7_62
+Change Net Name : Old Net Name=NetJ4_2 New Net Name=NetJ7_61
+Change Net Name : Old Net Name=NetJ4_3 New Net Name=NetJ7_60
+Change Net Name : Old Net Name=NetJ4_4 New Net Name=NetJ7_20
+Change Net Name : Old Net Name=NetJ4_6 New Net Name=NetJ7_21
+Change Net Name : Old Net Name=NetJ4_7 New Net Name=NetJ7_64
+Change Net Name : Old Net Name=NetJ4_8 New Net Name=NetJ7_63
+Change Net Name : Old Net Name=NetJ4_10 New Net Name=NetJ7_10
+Change Net Name : Old Net Name=NetJ4_11 New Net Name=NetJ7_9
+Change Net Name : Old Net Name=NetJ4_12 New Net Name=NetJ7_8
+Change Net Name : Old Net Name=NetJ4_13 New Net Name=NetJ7_7
+Change Net Name : Old Net Name=NetJ4_14 New Net Name=NetJ7_6
+Change Net Name : Old Net Name=NetJ4_15 New Net Name=NetJ7_5
+Change Net Name : Old Net Name=NetJ4_16 New Net Name=NetJ7_4
+Change Net Name : Old Net Name=NetJ4_17 New Net Name=NetJ7_3
+Change Net Name : Old Net Name=NetJ5_1 New Net Name=NetJ405_1
+Change Net Name : Old Net Name=NetJ5_2 New Net Name=NetJ405_2
+Change Net Name : Old Net Name=NetJ5_3 New Net Name=NetJ405_3
+Change Net Name : Old Net Name=NetJ5_4 New Net Name=NetJ405_4
+Change Net Name : Old Net Name=NetJ5_6 New Net Name=NetJ405_6
+Change Net Name : Old Net Name=NetJ8_5 New Net Name=NetJ408_5
+Added Pin To Net: NetName=NetJ7_24 Pin=J7-24
+Added Pin To Net: NetName=NetJ7_24 Pin=J401-1
+Added Net: Name=NetJ7_24
+Added Pin To Net: NetName=NetJ7_25 Pin=J7-25
+Added Pin To Net: NetName=NetJ7_25 Pin=J401-2
+Added Net: Name=NetJ7_25
+Added Pin To Net: NetName=NetJ7_26 Pin=J7-26
+Added Pin To Net: NetName=NetJ7_26 Pin=J401-3
+Added Net: Name=NetJ7_26
+Added Pin To Net: NetName=NetJ7_27 Pin=J7-27
+Added Pin To Net: NetName=NetJ7_27 Pin=J401-4
+Added Net: Name=NetJ7_27
+Added Pin To Net: NetName=NetJ7_28 Pin=J7-28
+Added Pin To Net: NetName=NetJ7_28 Pin=J401-5
+Added Net: Name=NetJ7_28
+Added Pin To Net: NetName=NetJ7_29 Pin=J7-29
+Added Pin To Net: NetName=NetJ7_29 Pin=J401-6
+Added Net: Name=NetJ7_29
+Added Pin To Net: NetName=NetJ7_30 Pin=J7-30
+Added Pin To Net: NetName=NetJ7_30 Pin=J401-8
+Added Net: Name=NetJ7_30
+Added Pin To Net: NetName=NetJ7_31 Pin=J7-31
+Added Pin To Net: NetName=NetJ7_31 Pin=J401-7
+Added Net: Name=NetJ7_31
+Added Pin To Net: NetName=NetJ7_70 Pin=J7-70
+Added Pin To Net: NetName=NetJ7_70 Pin=J401-10
+Added Net: Name=NetJ7_70
+Added Pin To Net: NetName=NetJ7_71 Pin=J7-71
+Added Pin To Net: NetName=NetJ7_71 Pin=J401-9
+Added Net: Name=NetJ7_71
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

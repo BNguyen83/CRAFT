@@ -1,0 +1,34 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 8:16:16 PM On 3/17/2022
+
+Output: Gerber X2 Files
+Type  : GerberX2
+From  : PCB Document [CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2.PcbDoc]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Copper_Signal_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Copper_Signal_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Pads_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Pads_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Paste_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Paste_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Legend_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Soldermask_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Legend_Top.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Soldermask_Bot.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Keep-out.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Mechanical_13.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Mechanical_15.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Profile.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_NPTH_Drill.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_PTH_Drill.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Drawing_1.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2_Drillmap_1.gbr]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2.RUL]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2.EXTREP]
+   Generated File[CRAFT_Current_Sense_Circuit_AJefferson_PCB_Rev2.REP]
+
+
+Files Generated   : 21
+Documents Printed : 0
+
+Finished Output Generation At 8:16:20 PM On 3/17/2022

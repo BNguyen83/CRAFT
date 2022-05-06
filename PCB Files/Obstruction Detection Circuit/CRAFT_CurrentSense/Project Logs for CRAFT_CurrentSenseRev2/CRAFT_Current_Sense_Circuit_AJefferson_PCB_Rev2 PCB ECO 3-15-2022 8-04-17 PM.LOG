@@ -1,0 +1,4 @@
+Change Component Footprint: Designator=L301 Old Footprint=AXIAL-0.9 New Footprint=INDRD500W70D900H1220
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJeffersonRev2
+Added Room: Name=CRAFT_E_Stop_AJeffersonRev2
+Added Room: Name=CRAFT_Negativesupply

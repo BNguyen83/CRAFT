@@ -1,0 +1,11 @@
+Removed Pin From Net: NetName=+3.3V Pin=J406-1
+Removed Pin From Net: NetName=GND Pin=J406-3
+Change Component Footprint: Designator=J406 Old Footprint=TE_1776118-3 New Footprint=3Pin Header
+Change Component Comment : Designator=J406 Old Comment=1776118-3 New Comment=3pin Header Male Shrouded
+Change component parameters: Designator = "J406"; Footprint = "3Pin Header"; UniqueID = "\PMODHGCS"
+Change component parameters. Clean all parameters for all variants
+Added Pin To Net: NetName=GND Pin=J406-1
+Added Pin To Net: NetName=+3.3V Pin=J406-3
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

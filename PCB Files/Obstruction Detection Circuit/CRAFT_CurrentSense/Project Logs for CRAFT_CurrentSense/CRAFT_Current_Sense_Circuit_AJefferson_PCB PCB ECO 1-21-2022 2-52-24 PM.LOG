@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=Current_A Pin=J2-02
+Removed Pin From Net: NetName=Current_B Pin=J2-04
+Added Pin To Net: NetName=Current_B Pin=J2-02
+Added Pin To Net: NetName=Current_A Pin=J2-04
+Added Room: Name=CRAFT_Current_Sense_Circuit_AJefferson

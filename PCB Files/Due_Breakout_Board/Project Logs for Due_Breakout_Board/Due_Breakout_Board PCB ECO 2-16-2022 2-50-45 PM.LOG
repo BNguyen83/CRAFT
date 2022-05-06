@@ -1,0 +1,32 @@
+Removed Pin From Net: NetName=+5V Pin=J5-1
+Removed Pin From Net: NetName=+5V Pin=J5-2
+Removed Pin From Net: NetName=GND Pin=J5-5
+Removed Pin From Net: NetName=GND Pin=J5-6
+Removed Pin From Net: NetName=NetJ5_3 Pin=J7-32
+Removed Pin From Net: NetName=NetJ5_4 Pin=J7-33
+Added Component: Designator=U2(HX711_BREAKOUT)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=NetJ5_4 Pin=U2-A+
+Added Pin To Net: NetName=NetJ5_3 Pin=U2-A-
+Added Pin To Net: NetName=GND Pin=U2-GND
+Added Pin To Net: NetName=+5V Pin=U2-VCC
+Added Pin To Net: NetName=+3.3V Pin=U2-VDD
+Added Pin To Net: NetName=NetJ5_1 Pin=J5-1
+Added Pin To Net: NetName=NetJ5_1 Pin=U2-E+
+Added Net: Name=NetJ5_1
+Added Pin To Net: NetName=NetJ5_2 Pin=J5-2
+Added Pin To Net: NetName=NetJ5_2 Pin=U2-E-
+Added Net: Name=NetJ5_2
+Added Pin To Net: NetName=NetJ5_6 Pin=J5-6
+Added Pin To Net: NetName=NetJ5_6 Pin=U2-SHEILD
+Added Net: Name=NetJ5_6
+Added Pin To Net: NetName=NetJ7_32 Pin=J7-32
+Added Pin To Net: NetName=NetJ7_32 Pin=U2-DAT
+Added Net: Name=NetJ7_32
+Added Pin To Net: NetName=NetJ7_33 Pin=J7-33
+Added Pin To Net: NetName=NetJ7_33 Pin=U2-SCK
+Added Net: Name=NetJ7_33
+Added Member To Class: ClassName=Due_Breakout_Board supporting circuits Member=Component U2 HX711
+Added Room: Name=Due_Breakout_Board
+Added Room: Name=Due_Breakout_Board Headers
+Added Room: Name=Due_Breakout_Board supporting circuits

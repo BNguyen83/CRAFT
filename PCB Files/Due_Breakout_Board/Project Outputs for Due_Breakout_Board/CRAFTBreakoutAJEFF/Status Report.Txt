@@ -1,0 +1,34 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 4:09:26 PM On 2/23/2022
+
+Output: Gerber X2 Files
+Type  : GerberX2
+From  : PCB Document [Due_Breakout_Board.PcbDoc]
+   Generated File[Due_Breakout_Board_Copper_Signal_Top.gbr]
+   Generated File[Due_Breakout_Board_Copper_Signal_1.gbr]
+   Generated File[Due_Breakout_Board_Copper_Signal_2.gbr]
+   Generated File[Due_Breakout_Board_Copper_Signal_Bot.gbr]
+   Generated File[Due_Breakout_Board_Pads_Bot.gbr]
+   Generated File[Due_Breakout_Board_Pads_Top.gbr]
+   Generated File[Due_Breakout_Board_Paste_Top.gbr]
+   Generated File[Due_Breakout_Board_Legend_Bot.gbr]
+   Generated File[Due_Breakout_Board_Paste_Bot.gbr]
+   Generated File[Due_Breakout_Board_Soldermask_Top.gbr]
+   Generated File[Due_Breakout_Board_Legend_Top.gbr]
+   Generated File[Due_Breakout_Board_Soldermask_Bot.gbr]
+   Generated File[Due_Breakout_Board_Keep-out.gbr]
+   Generated File[Due_Breakout_Board_Profile.gbr]
+   Generated File[Due_Breakout_Board_NPTH_Drill.gbr]
+   Generated File[Due_Breakout_Board_PTH_Drill.gbr]
+   Generated File[Due_Breakout_Board_Drawing_1.gbr]
+   Generated File[Due_Breakout_Board_Drillmap_1.gbr]
+   Generated File[Due_Breakout_Board.RUL]
+   Generated File[Due_Breakout_Board.EXTREP]
+   Generated File[Due_Breakout_Board.REP]
+
+
+Files Generated   : 21
+Documents Printed : 0
+
+Finished Output Generation At 4:09:32 PM On 2/23/2022
