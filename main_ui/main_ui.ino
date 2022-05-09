@@ -123,7 +123,7 @@ void loop()
 
   // "interupts" Handler
   interruptHand();
-  motorTimer();
+  //motorTimer();
   if (endFlag != 0) {
     mainState = 9;
   }
@@ -575,11 +575,7 @@ void loop()
           cycleCounter++;
           testEnd();
           //endFlag = 4;
-          for (int w = 0; w < 20; w++) {
-            Serial.print(res[w]);
-            Serial.print(" ");
-          }
-          Serial.println();
+         
           //------------------------------------------------------------------------
           if (cycleCounter > cycleCount) {
             mainState = 9;
@@ -1083,7 +1079,7 @@ void testEnd() {
   for (int rescount = 0; rescount < 20; rescount++) {
     if (res[rescount] > maxRes) {
       radd[2]++;
-      Serial.println(radd[2]);
+      //Serial.println(radd[2]);
       break;
     }
     else {
